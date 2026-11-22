@@ -3,6 +3,7 @@
     "name": "MaaResonance",
     "label": "MaaResonance",
     "title": "MaaResonance",
+    "icon": "resource/icon/logo.png",
     "description": "基于 MaaFramework 的 Resonance 自动化辅助项目。",
     "contact": "Issues: https://github.com/DaiMao204/MaaResonance/issues",
     "license": "AGPL-3.0-only",

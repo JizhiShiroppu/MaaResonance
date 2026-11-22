@@ -5,7 +5,13 @@ from pathlib import Path
 import shutil
 import sys
 
-REPO_ROOT = Path(__file__).resolve().parents[1]
+TOOLS_DIR = Path(__file__).resolve().parent
+if str(TOOLS_DIR) not in sys.path:
+    sys.path.insert(0, str(TOOLS_DIR))
+
+from win32_exe_icon import patch_exe_icon
+
+REPO_ROOT = TOOLS_DIR.parent
 DEFAULT_TARGET_ROOT = Path(r"E:\Program Files\MaaResonance")
 
 
@@ -69,6 +75,13 @@ def sync_to_packaged(target_root: Path = DEFAULT_TARGET_ROOT) -> None:
             target_root / "resource" / "pc",
             suffixes=(".json", ".png"),
         )
+    src_icon = REPO_ROOT / "assets" / "resource" / "icon"
+    if src_icon.exists():
+        copied += _copy_tree_files(
+            src_icon,
+            target_root / "resource" / "icon",
+            suffixes=(".png", ".ico"),
+        )
     stale_win32 = target_root / "resource" / "win32"
     if stale_win32.exists():
         shutil.rmtree(stale_win32)
@@ -91,6 +104,25 @@ def sync_to_packaged(target_root: Path = DEFAULT_TARGET_ROOT) -> None:
         interface_data["agent"]["child_exec"] = "./python/python.exe"
         interface_data["agent"]["child_args"] = ["-u", "./agent/main.py"]
     dst_interface.write_text(json.dumps(interface_data, ensure_ascii=False, indent=4), encoding="utf-8")
+
+    exe_path = target_root / "MaaResonance.exe"
+    ico_path = target_root / "resource" / "icon" / "logo.ico"
+    if sys.platform == "win32" and exe_path.exists() and ico_path.exists():
+        try:
+            group_id, lang_id, frame_count = patch_exe_icon(
+                exe_path,
+                ico_path,
+                notify_shell=(target_root.resolve() == DEFAULT_TARGET_ROOT.resolve()),
+            )
+            print(
+                f"Updated icon on {exe_path} "
+                f"(group={group_id}, lang={lang_id}, frames={frame_count})"
+            )
+        except OSError as exc:
+            print(
+                f"Warning: skipped updating {exe_path} icon ({exc}); "
+                "close MaaResonance.exe and re-run sync to refresh the .exe file icon."
+            )
 
     print(f"Synced {copied} files + interface.json -> {target_root}")
 

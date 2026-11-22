@@ -27,10 +27,12 @@ except ModuleNotFoundError as e:
     ) from e
 
 from configure import configure_ocr_model
+from win32_exe_icon import patch_exe_icon
 
 
 working_dir = Path(__file__).parent.parent.resolve()
 install_path = working_dir / Path("install")
+APP_ICON_ICO = working_dir / "assets" / "resource" / "icon" / "logo.ico"
 version = len(sys.argv) > 1 and sys.argv[1] or "v0.0.1"
 options = set(sys.argv[4:])
 
@@ -297,6 +299,15 @@ def install_mxu():
         _reset_generated_path(install_path / packaged_executable_name)
         _reset_generated_path(install_path / "Start_MXU.bat")
         shutil.copy2(executable, install_path / packaged_executable_name)
+        if os_name == "win" and sys.platform == "win32" and APP_ICON_ICO.exists():
+            group_id, lang_id, frame_count = patch_exe_icon(
+                install_path / packaged_executable_name,
+                APP_ICON_ICO,
+            )
+            print(
+                f"Applied custom Windows icon (group={group_id}, lang={lang_id}, frames={frame_count}) "
+                f"-> {packaged_executable_name}"
+            )
 
         pdb = next(extracted.rglob("mxu.pdb"), None)
         if pdb is not None and _truthy_env("MAA_RESONANCE_INCLUDE_MXU_PDB"):
