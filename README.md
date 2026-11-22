@@ -2,32 +2,36 @@
 
 <div align="center">
 
-# MaaResonance
+# MaaResonance Plus
 
-基于 MaaFramework 全新架构的 雷索纳斯 小助手。图像识别 + 模拟控制，解放双手！  
+基于 MaaFramework 的《雷索纳斯》自动化小助手（社区衍生增强发行版）。  
 由 [MaaFramework](https://github.com/MaaXYZ/MaaFramework) 强力驱动！  
-<a href="https://github.com/DaiMao204/MaaResonance" target="_blank" style="font-weight: bold;">🔗 本项目 GitHub 仓库</a><br>
-🌟喜欢本项目就在仓库右上角点个星星吧🌟
+<a href="https://github.com/JizhiShiroppu/MaaResonance" target="_blank" style="font-weight: bold;">🔗 本发行版 GitHub 仓库</a><br>
+🌟喜欢本项目欢迎给上游原仓库与本仓库点个星星🌟
 
 </div>
 
 <p align="center">
   <img alt="Python" src="https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white">
   <img alt="platform" src="https://img.shields.io/badge/platform-Windows%20%7C%20Android%20Emulator-blueviolet">
-  <img alt="license" src="https://img.shields.io/github/license/DaiMao204/MaaResonance">
+  <img alt="license" src="https://img.shields.io/github/license/JizhiShiroppu/MaaResonance">
   <br>
-  <img alt="commit" src="https://img.shields.io/github/commit-activity/m/DaiMao204/MaaResonance">
-  <img alt="stars" src="https://img.shields.io/github/stars/DaiMao204/MaaResonance?style=social">
-  <img alt="downloads" src="https://img.shields.io/github/downloads/DaiMao204/MaaResonance/total?style=social">
+  <img alt="commit" src="https://img.shields.io/github/commit-activity/m/JizhiShiroppu/MaaResonance">
+  <img alt="stars" src="https://img.shields.io/github/stars/JizhiShiroppu/MaaResonance?style=social">
+  <img alt="downloads" src="https://img.shields.io/github/downloads/JizhiShiroppu/MaaResonance/total?style=social">
 </p>
 
 <div align="center">
 
 [简体中文](./README.md)
 
-[已有 Mirror酱 CDK？前往 Mirror酱高速下载](https://mirrorchyan.com/zh/projects?rid=MaaResonance)
-
 </div>
+
+> [!Important]
+>
+> 本发行版是基于 [DaiMao204/MaaResonance](https://github.com/DaiMao204/MaaResonance) 的社区衍生增强版，遵循原项目 **AGPL-3.0-only** 开源协议。  
+> 新增功能均按独立模块向原仓库提交 PR，上游合入后也会持续同步主线。  
+> **使用本增强版遇到任何问题，请直接在本仓库 [Issues](https://github.com/JizhiShiroppu/MaaResonance/issues) 反馈，请勿去原仓库打扰原作者。**
 
 ## ⚠️免责声明与风险提示
 
@@ -50,17 +54,28 @@
 ## 使用须知
 
 - 运行 `MaaResonance.exe` 后选择控制器。游戏画面使用 16:9，推荐 `1920x1080` 或 `1280x720`。
-- **安卓模拟器**使用 ADB 连接，推荐 MuMu。可使用启动游戏、手动双城跑商和自动双城跑商。
-- **国服 PC 客户端（试用）**支持手动双城跑商。先打开游戏并登录，进入可操作的主界面，再选择「PC 客户端（前台）」并连接游戏窗口。保持游戏窗口可见，运行期间鼠标由助手控制。
-- 如需后台挂机（不占主画面），可按习惯选用 **「PC 客户端（后台-移窗不抢鼠标）」**（不移动物理鼠标，点击/滑动时在后台平移游戏窗口对齐光标）或 **「PC 客户端（后台-移光标）」**（游戏窗口保持原位不动，点击/滑动瞬间短暂借用并复位鼠标）。后台模式下游戏窗口可被其他窗口遮挡，但**不可最小化**；若遇到兼容性问题可随时切回默认的「PC 客户端（前台）」。
-- 首次在 PC 上运行时可选「PC 手动跑商（一轮）」预设，核对起点和目标城市后开始。预设执行一轮往返，两程均使用 0 本进货书，关闭自动使用消耗品。若画面或行车状态需要重启才能恢复，任务会停止并提示手动处理。
-- PC 一轮预设会核对当前 UID，并直接使用该账号的本地资料，缺失时使用默认配置。需要更新资料时可将「账号配置读取模式」改为「智能读取」。PC 端的完整资料扫描仍待实机验证。
+- **安卓模拟器**使用 ADB 连接，推荐 MuMu。可使用完整自动日常、主线/铁安局/作战中心/虚演刻录推进、启动游戏及双城跑商。
+- **国服 PC 客户端**支持**前台**与两种可选**后台模式**（`PC 客户端（后台-移窗不抢鼠标）` / `PC 客户端（后台-移光标）`）。先打开游戏并登录，进入可操作的主界面再连接游戏窗口；后台模式下游戏窗口可被其他窗口遮挡，但**不可最小化**；若遇到兼容性问题可随时切回默认的「PC 客户端（前台）」。
+- 首次在 PC 上跑商时可选「PC 手动跑商（一轮）」或「PC 自动跑商（试用）」预设，核对参数后开始。PC 一轮预设会核对当前 UID 并使用本地账号资料，缺失时采用默认配置；需要更新资料时可将「账号配置读取模式」改为「智能读取」。
 
 ## 功能列表
 
-- 启动游戏
-- 手动双城跑商（支持可选的行车自动拾取）
-- 自动双城跑商（支持可选的行车自动拾取）
+- **一键自动日常**（可自由勾选顺序与开关）与轻量日常整合：
+  - 开始唤醒（热更确认、公告关闭、首登弹窗收口）
+  - 日常前置收菜（邮箱领取、派遣委托、好友支援金币、启程签到、商城无垠补给周卡、营收排行榜点赞）
+  - 自动商店采购（按 UID 记录 05:00 日/周/月刷新周期，支持黑月总部商店、赴命商店、商会里程点数兑换与 `*N` 限购 / `^` 置顶）
+  - 共斗活动（众志攻坚自动挑存活最高难度及领奖）、活动/关卡刷澄明度、限时剧情日常（糖霜记忆）
+  - 日常收尾领奖（导航手册每日活跃与宝箱、环游手册通行证奖励）
+- **战斗与剧情推进**：
+  - 主线自动推进（实验性）、剧情跳过、自动编队与自动战斗（快斩模式 / 权重出牌模式）
+  - 铁安局全自动（远程逐城清 100% / 本地刷声望）
+  - 区域作战中心自动推关（支持短站点低关卡优先与澄明度安全停机）
+  - 虚演刻录自动推关（支持低敌方等级优先、未达成 S 级自动跳过与 0 门票收口）
+- **双城跑商与基建托管**：
+  - 启动游戏、手动/自动双城跑商（支持可选的行车自动拾取）
+  - **整顿中心（监狱）自动（实验型）**：支持从任意城市左抽屉远程打开并接入「一键自动日常」可选步骤；提供 14 项自定义子模块复选框、排产时长/配员/扩仓上限/自定义资金底线等调参项，全程受零桦石像素+OCR 双重护栏与阶梯锁保护，并生成离线 HTML 看板与 `config/planning/logs/prison_issue_*.zip` 脱敏排错包
+  - **海岛（蜃息岛）自动（实验型）**：支持经活动中心远程入岛并接入「一键自动日常」可选步骤；提供只读体检/三阶段规划 HTML 看板、零消耗日跑闭环（营运收钱、垃圾站右侧【一键收取】防误触一键处理、0 体力红叹号清怪、好友偷垃圾/点赞/治安助战、事项一览领奖与纪念卡包自动拆包），以及默认关闭、需手动在自定义模式启用的海角城投资/海岛扩建（带留存底线与零桦石保护）与 `config/planning/logs/island_issue_*.zip` 脱敏排错包
+  - 断线弹窗自动重连守卫（全局可选）
 
 ## 开发相关
 
@@ -78,15 +93,20 @@
 
 ## Star 历史
 
-<a href="https://www.star-history.com/#DaiMao204/MaaResonance&Date">
+<a href="https://www.star-history.com/#JizhiShiroppu/MaaResonance&Date">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=DaiMao204/MaaResonance&type=Date&theme=dark" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=DaiMao204/MaaResonance&type=Date" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=DaiMao204/MaaResonance&type=Date" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=JizhiShiroppu/MaaResonance&type=Date&theme=dark" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=JizhiShiroppu/MaaResonance&type=Date" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=JizhiShiroppu/MaaResonance&type=Date" />
  </picture>
 </a>
 
 ## 鸣谢
+
+### 上游原项目
+
+- [DaiMao204/MaaResonance](https://github.com/DaiMao204/MaaResonance)  
+  本衍生增强版的上游项目与原始基础。
 
 ### 核心框架
 
@@ -100,12 +120,12 @@
 
 ### 开发者
 
-感谢以下开发者对本项目作出的贡献:
+感谢所有为上游项目与本衍生版作出贡献的开发者:
 
 [![Contributors](https://contrib.rocks/image?repo=DaiMao204/MaaResonance&max=1000)](https://github.com/DaiMao204/MaaResonance/graphs/contributors)
 
-## 加入我们
+## 问题反馈与交流
 
-- MaaResonance 问题反馈：[Issues](https://github.com/DaiMao204/MaaResonance/issues)
+- 本增强版问题反馈：[Issues](https://github.com/JizhiShiroppu/MaaResonance/issues)
 - MaaFramework 开发交流 QQ 群：595990173
-- 首版测试反馈：请附带 MXU 日志、截图、任务配置与出错界面截图。
+- 反馈问题时请附带 MXU 日志、任务配置与出错界面截图；若涉及整顿中心（监狱）或海岛（蜃息岛），可直接附带 `config/planning/logs/prison_issue_*.zip` 或 `island_issue_*.zip` 脱敏排错压缩包。
