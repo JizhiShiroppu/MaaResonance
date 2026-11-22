@@ -1,0 +1,71 @@
+{
+    "SyncCardTemplatesStart": {
+        "recognition": "OCR",
+        "expected": [
+            "Box托管配置器",
+            "托管配置器"
+        ],
+        "roi": [
+            0,
+            260,
+            160,
+            160
+        ],
+        "action": "Custom",
+        "custom_action": "guarded_click",
+        "post_delay": 900,
+        "next": [
+            "SyncCardTemplatesCapture"
+        ]
+    },
+    "SyncCardTemplatesCapture": {
+        "recognition": "OCR",
+        "expected": [
+            "自定义权重",
+            "权重排序"
+        ],
+        "roi": [
+            80,
+            0,
+            700,
+            160
+        ],
+        "action": "Custom",
+        "custom_action": "sync_box_card_templates",
+        "post_delay": 300,
+        "next": [
+            "SyncCardTemplatesExit"
+        ]
+    },
+    "SyncCardTemplatesExit": {
+        "recognition": "DirectHit",
+        "action": "Custom",
+        "custom_action": "guarded_click",
+        "custom_action_param": {
+            "target": [
+                64,
+                36,
+                1,
+                1
+            ]
+        },
+        "post_delay": 700,
+        "next": [
+            "SyncCardTemplatesDone"
+        ]
+    },
+    "SyncCardTemplatesDone": {
+        "recognition": "OCR",
+        "expected": [
+            "快速编队",
+            "Box托管配置器"
+        ],
+        "roi": [
+            0,
+            0,
+            1280,
+            420
+        ],
+        "action": "DoNothing"
+    }
+}

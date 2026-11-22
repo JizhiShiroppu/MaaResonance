@@ -1,0 +1,838 @@
+{
+    "CityTradeOutletSwipeSlight": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_swipe",
+                "custom_action_param": {
+                    "begin": [
+                        457,
+                        340
+                    ],
+                    "end": [
+                        457,
+                        369
+                    ],
+                    "duration": 500
+                }
+            }
+        }
+    },
+    "CityTradeOutletSwipeLeft": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_swipe",
+                "custom_action_param": {
+                    "begin": [
+                        400,
+                        340
+                    ],
+                    "end": [
+                        457,
+                        340
+                    ],
+                    "duration": 500
+                }
+            }
+        }
+    },
+    "CityTradeOutletSwipeRight": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_swipe",
+                "custom_action_param": {
+                    "begin": [
+                        969,
+                        369
+                    ],
+                    "end": [
+                        457,
+                        340
+                    ],
+                    "duration": 500
+                }
+            }
+        }
+    },
+    "CityTradeOutletSwipeDown": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_swipe",
+                "custom_action_param": {
+                    "begin": [
+                        641,
+                        246
+                    ],
+                    "end": [
+                        637,
+                        615
+                    ],
+                    "duration": 500
+                }
+            }
+        }
+    },
+    "AccountProfilePrestigeScrollToPage2": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_swipe",
+                "custom_action_param": {
+                    "begin": [
+                        960,
+                        600
+                    ],
+                    "end": [
+                        960,
+                        325
+                    ],
+                    "duration": 700
+                }
+            }
+        }
+    },
+    "AccountProfileRoleResonanceScroll001": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_swipe",
+                "custom_action_param": {
+                    "begin": [
+                        920,
+                        620
+                    ],
+                    "end": [
+                        920,
+                        500
+                    ],
+                    "duration": 520
+                }
+            }
+        }
+    },
+    "AccountProfileRoleResonanceScroll002": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_swipe",
+                "custom_action_param": {
+                    "begin": [
+                        920,
+                        620
+                    ],
+                    "end": [
+                        920,
+                        500
+                    ],
+                    "duration": 520
+                }
+            }
+        }
+    },
+    "AccountProfileRoleResonanceScroll003": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_swipe",
+                "custom_action_param": {
+                    "begin": [
+                        920,
+                        620
+                    ],
+                    "end": [
+                        920,
+                        500
+                    ],
+                    "duration": 520
+                }
+            }
+        }
+    },
+    "AccountProfileRoleResonanceScroll004": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_swipe",
+                "custom_action_param": {
+                    "begin": [
+                        920,
+                        620
+                    ],
+                    "end": [
+                        920,
+                        500
+                    ],
+                    "duration": 520
+                }
+            }
+        }
+    },
+    "AccountProfileRoleResonanceScroll005": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_swipe",
+                "custom_action_param": {
+                    "begin": [
+                        920,
+                        620
+                    ],
+                    "end": [
+                        920,
+                        500
+                    ],
+                    "duration": 520
+                }
+            }
+        }
+    },
+    "AccountProfileRoleResonanceScroll006": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_swipe",
+                "custom_action_param": {
+                    "begin": [
+                        920,
+                        620
+                    ],
+                    "end": [
+                        920,
+                        500
+                    ],
+                    "duration": 520
+                }
+            }
+        }
+    },
+    "AccountProfileRoleResonanceScroll007": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_swipe",
+                "custom_action_param": {
+                    "begin": [
+                        920,
+                        620
+                    ],
+                    "end": [
+                        920,
+                        500
+                    ],
+                    "duration": 520
+                }
+            }
+        }
+    },
+    "AccountProfileRoleResonanceScroll008": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_swipe",
+                "custom_action_param": {
+                    "begin": [
+                        920,
+                        620
+                    ],
+                    "end": [
+                        920,
+                        500
+                    ],
+                    "duration": 520
+                }
+            }
+        }
+    },
+    "AccountProfileRoleResonanceScroll009": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_swipe",
+                "custom_action_param": {
+                    "begin": [
+                        920,
+                        620
+                    ],
+                    "end": [
+                        920,
+                        500
+                    ],
+                    "duration": 520
+                }
+            }
+        }
+    },
+    "AccountProfileRoleResonanceScroll010": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_swipe",
+                "custom_action_param": {
+                    "begin": [
+                        920,
+                        620
+                    ],
+                    "end": [
+                        920,
+                        500
+                    ],
+                    "duration": 520
+                }
+            }
+        }
+    },
+    "AccountProfileRoleResonanceScroll011": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_swipe",
+                "custom_action_param": {
+                    "begin": [
+                        920,
+                        620
+                    ],
+                    "end": [
+                        920,
+                        500
+                    ],
+                    "duration": 520
+                }
+            }
+        }
+    },
+    "AccountProfileRoleResonanceScroll012": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_swipe",
+                "custom_action_param": {
+                    "begin": [
+                        920,
+                        620
+                    ],
+                    "end": [
+                        920,
+                        500
+                    ],
+                    "duration": 520
+                }
+            }
+        }
+    },
+    "AccountProfileRoleResonanceScroll013": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_swipe",
+                "custom_action_param": {
+                    "begin": [
+                        920,
+                        620
+                    ],
+                    "end": [
+                        920,
+                        500
+                    ],
+                    "duration": 520
+                }
+            }
+        }
+    },
+    "AccountProfileRoleResonanceScroll014": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_swipe",
+                "custom_action_param": {
+                    "begin": [
+                        920,
+                        620
+                    ],
+                    "end": [
+                        920,
+                        500
+                    ],
+                    "duration": 520
+                }
+            }
+        }
+    },
+    "AccountProfileRoleResonanceScroll015": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_swipe",
+                "custom_action_param": {
+                    "begin": [
+                        920,
+                        620
+                    ],
+                    "end": [
+                        920,
+                        500
+                    ],
+                    "duration": 520
+                }
+            }
+        }
+    },
+    "AccountProfileRoleResonanceScroll016": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_swipe",
+                "custom_action_param": {
+                    "begin": [
+                        920,
+                        620
+                    ],
+                    "end": [
+                        920,
+                        500
+                    ],
+                    "duration": 520
+                }
+            }
+        }
+    },
+    "AccountProfileRoleResonanceScroll017": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_swipe",
+                "custom_action_param": {
+                    "begin": [
+                        920,
+                        620
+                    ],
+                    "end": [
+                        920,
+                        500
+                    ],
+                    "duration": 520
+                }
+            }
+        }
+    },
+    "AccountProfileRoleResonanceScroll018": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_swipe",
+                "custom_action_param": {
+                    "begin": [
+                        920,
+                        620
+                    ],
+                    "end": [
+                        920,
+                        500
+                    ],
+                    "duration": 520
+                }
+            }
+        }
+    },
+    "AccountProfileRoleResonanceScroll019": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_swipe",
+                "custom_action_param": {
+                    "begin": [
+                        920,
+                        620
+                    ],
+                    "end": [
+                        920,
+                        500
+                    ],
+                    "duration": 520
+                }
+            }
+        }
+    },
+    "AccountProfileRoleResonanceScroll020": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_swipe",
+                "custom_action_param": {
+                    "begin": [
+                        920,
+                        620
+                    ],
+                    "end": [
+                        920,
+                        500
+                    ],
+                    "duration": 520
+                }
+            }
+        }
+    },
+    "AccountProfileRoleResonanceScroll021": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_swipe",
+                "custom_action_param": {
+                    "begin": [
+                        920,
+                        620
+                    ],
+                    "end": [
+                        920,
+                        500
+                    ],
+                    "duration": 520
+                }
+            }
+        }
+    },
+    "AccountProfileRoleResonanceScroll022": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_swipe",
+                "custom_action_param": {
+                    "begin": [
+                        920,
+                        620
+                    ],
+                    "end": [
+                        920,
+                        500
+                    ],
+                    "duration": 520
+                }
+            }
+        }
+    },
+    "AccountProfileRoleResonanceScroll023": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_swipe",
+                "custom_action_param": {
+                    "begin": [
+                        920,
+                        620
+                    ],
+                    "end": [
+                        920,
+                        500
+                    ],
+                    "duration": 520
+                }
+            }
+        }
+    },
+    "ManualTwoCityBusinessProductScanResetTop001": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_swipe",
+                "custom_action_param": {
+                    "begin": [
+                        690,
+                        210
+                    ],
+                    "end": [
+                        690,
+                        560
+                    ],
+                    "duration": 600
+                }
+            }
+        }
+    },
+    "ManualTwoCityBusinessProductScanResetTop002": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_swipe",
+                "custom_action_param": {
+                    "begin": [
+                        690,
+                        210
+                    ],
+                    "end": [
+                        690,
+                        560
+                    ],
+                    "duration": 600
+                }
+            }
+        }
+    },
+    "ManualTwoCityBusinessProductScanResetTop003": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_swipe",
+                "custom_action_param": {
+                    "begin": [
+                        690,
+                        210
+                    ],
+                    "end": [
+                        690,
+                        560
+                    ],
+                    "duration": 600
+                }
+            }
+        }
+    },
+    "ManualTwoCityBusinessProductScanResetTop004": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_swipe",
+                "custom_action_param": {
+                    "begin": [
+                        690,
+                        210
+                    ],
+                    "end": [
+                        690,
+                        560
+                    ],
+                    "duration": 600
+                }
+            }
+        }
+    },
+    "ManualTwoCityBusinessProductScanScroll001": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_swipe",
+                "custom_action_param": {
+                    "begin": [
+                        690,
+                        560
+                    ],
+                    "end": [
+                        690,
+                        430
+                    ],
+                    "duration": 600
+                }
+            }
+        }
+    },
+    "ManualTwoCityBusinessProductScanScroll002": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_swipe",
+                "custom_action_param": {
+                    "begin": [
+                        690,
+                        560
+                    ],
+                    "end": [
+                        690,
+                        430
+                    ],
+                    "duration": 600
+                }
+            }
+        }
+    },
+    "ManualTwoCityBusinessProductScanScroll003": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_swipe",
+                "custom_action_param": {
+                    "begin": [
+                        690,
+                        560
+                    ],
+                    "end": [
+                        690,
+                        430
+                    ],
+                    "duration": 600
+                }
+            }
+        }
+    },
+    "ManualTwoCityBusinessProductScanScroll004": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_swipe",
+                "custom_action_param": {
+                    "begin": [
+                        690,
+                        560
+                    ],
+                    "end": [
+                        690,
+                        430
+                    ],
+                    "duration": 600
+                }
+            }
+        }
+    },
+    "ManualTwoCityBusinessProductScanScroll005": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_swipe",
+                "custom_action_param": {
+                    "begin": [
+                        690,
+                        560
+                    ],
+                    "end": [
+                        690,
+                        430
+                    ],
+                    "duration": 600
+                }
+            }
+        }
+    },
+    "ManualTwoCityBusinessProductScanScroll006": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_swipe",
+                "custom_action_param": {
+                    "begin": [
+                        690,
+                        560
+                    ],
+                    "end": [
+                        690,
+                        430
+                    ],
+                    "duration": 600
+                }
+            }
+        }
+    },
+    "ManualTwoCityBusinessProductScanScroll007": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_swipe",
+                "custom_action_param": {
+                    "begin": [
+                        690,
+                        560
+                    ],
+                    "end": [
+                        690,
+                        430
+                    ],
+                    "duration": 600
+                }
+            }
+        }
+    },
+    "ManualTwoCityBusinessBuySelectionResetTop001": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_swipe",
+                "custom_action_param": {
+                    "begin": [
+                        690,
+                        210
+                    ],
+                    "end": [
+                        690,
+                        560
+                    ],
+                    "duration": 600
+                }
+            }
+        }
+    },
+    "ManualTwoCityBusinessBuySelectionResetTop002": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_swipe",
+                "custom_action_param": {
+                    "begin": [
+                        690,
+                        210
+                    ],
+                    "end": [
+                        690,
+                        560
+                    ],
+                    "duration": 600
+                }
+            }
+        }
+    },
+    "ManualTwoCityBusinessScrollBuyGoods001": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_swipe",
+                "custom_action_param": {
+                    "begin": [
+                        690,
+                        560
+                    ],
+                    "end": [
+                        690,
+                        210
+                    ],
+                    "duration": 600
+                }
+            }
+        }
+    },
+    "ManualTwoCityBusinessScrollBuyGoods002": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_swipe",
+                "custom_action_param": {
+                    "begin": [
+                        690,
+                        560
+                    ],
+                    "end": [
+                        690,
+                        210
+                    ],
+                    "duration": 600
+                }
+            }
+        }
+    },
+    "ManualTwoCityBusinessScrollBuyGoods003": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_swipe",
+                "custom_action_param": {
+                    "begin": [
+                        690,
+                        560
+                    ],
+                    "end": [
+                        690,
+                        210
+                    ],
+                    "duration": 600
+                }
+            }
+        }
+    }
+}

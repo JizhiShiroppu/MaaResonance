@@ -36,6 +36,10 @@ def _load_sell_actions(state: dict) -> dict:
         "CustomAction": object,
         "clean_text": lambda text: str(text or "").strip(),
         "time": SimpleNamespace(sleep=Mock()),
+        "wait_mouse_button_released": lambda _context: True,
+        "run_controller_click_guarded": lambda context, x, y, **_kw: bool(
+            getattr(context.tasker.controller.post_click(int(x), int(y)).wait(), "succeeded", True)
+        ),
         "_manual_two_city_state": lambda: state,
         "_manual_two_city_active_leg": lambda: state["legs"][state["active_leg_index"]],
         "_append_user_log": Mock(),

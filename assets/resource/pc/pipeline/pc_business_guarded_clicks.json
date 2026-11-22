@@ -1,0 +1,2122 @@
+{
+    "CityTradeOutletCloseSettlementReport": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        640,
+                        680
+                    ]
+                }
+            }
+        }
+    },
+    "CityTradeOutletCloseStrengthPage": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        83,
+                        36
+                    ]
+                }
+            }
+        }
+    },
+    "CityTradeOutletTapWulinMarket001": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click"
+            }
+        }
+    },
+    "CityTradeOutletTapByOcr001": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target_offset": [
+                        0,
+                        65
+                    ]
+                }
+            }
+        }
+    },
+    "CityTradeOutletTapWulinMarket002": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click"
+            }
+        }
+    },
+    "CityTradeOutletTapByOcr002": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target_offset": [
+                        0,
+                        65
+                    ]
+                }
+            }
+        }
+    },
+    "CityTradeOutletTapWulinMarket003": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click"
+            }
+        }
+    },
+    "CityTradeOutletTapByOcr003": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target_offset": [
+                        0,
+                        65
+                    ]
+                }
+            }
+        }
+    },
+    "CityTradeOutletTapWulinMarket004": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click"
+            }
+        }
+    },
+    "CityTradeOutletTapByOcr004": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target_offset": [
+                        0,
+                        65
+                    ]
+                }
+            }
+        }
+    },
+    "CityTradeOutletTapWulinMarket005": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click"
+            }
+        }
+    },
+    "CityTradeOutletTapByOcr005": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target_offset": [
+                        0,
+                        65
+                    ]
+                }
+            }
+        }
+    },
+    "StateRecoveryTapStartScreen": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click"
+            }
+        }
+    },
+    "StateRecoveryCloseActivityPanel": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        83,
+                        36
+                    ]
+                }
+            }
+        }
+    },
+    "StateRecoveryTapResourceDownloadConfirm": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click"
+            }
+        }
+    },
+    "StateRecoveryCloseAnnouncement": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        1110,
+                        95
+                    ]
+                }
+            }
+        }
+    },
+    "StateRecoveryCloseGenericPopup": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        640,
+                        705
+                    ]
+                }
+            }
+        }
+    },
+    "StateRecoveryTapNetworkPoorConfirm": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click"
+            }
+        }
+    },
+    "StateRecoveryConfirmPlainPopup": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click"
+            }
+        }
+    },
+    "StateRecoveryCloseRouteMapDetail": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        330,
+                        360
+                    ]
+                }
+            }
+        }
+    },
+    "StateRecoveryCloseBuySellReport": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        1180,
+                        680
+                    ]
+                }
+            }
+        }
+    },
+    "StateRecoveryCloseRouteLossReport": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        727,
+                        541
+                    ]
+                }
+            }
+        }
+    },
+    "StateRecoveryEnterArrivedCity": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        1270,
+                        494
+                    ]
+                }
+            }
+        }
+    },
+    "StateRecoveryCloseGoodDetail": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        100,
+                        100
+                    ]
+                }
+            }
+        }
+    },
+    "StateRecoveryCloseStrengthPrompt": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        640,
+                        510
+                    ]
+                }
+            }
+        }
+    },
+    "StateRecoveryCloseBentoCabinet": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        83,
+                        36
+                    ]
+                }
+            }
+        }
+    },
+    "StateRecoveryCloseStrengthPage": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        198,
+                        36
+                    ]
+                }
+            }
+        }
+    },
+    "StateRecoveryCloseTradePage": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        83,
+                        36
+                    ]
+                }
+            }
+        }
+    },
+    "StateRecoveryCloseTradeMenu": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        83,
+                        36
+                    ]
+                }
+            }
+        }
+    },
+    "StateRecoveryClosePersonalInfo": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        900,
+                        360
+                    ]
+                }
+            }
+        }
+    },
+    "StateRecoveryCloseProfilePanel": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        83,
+                        36
+                    ]
+                }
+            }
+        }
+    },
+    "StateRecoveryCloseRoleWarehouse": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        83,
+                        36
+                    ]
+                }
+            }
+        }
+    },
+    "StateRecoveryCloseCityPageByOcr": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        83,
+                        36
+                    ]
+                }
+            }
+        }
+    },
+    "StateRecoveryCloseCityPageByTemplate": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        83,
+                        36
+                    ]
+                }
+            }
+        }
+    },
+    "StateRecoveryCloseRouteMap": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        83,
+                        36
+                    ]
+                }
+            }
+        }
+    },
+    "StateRecoveryCloseMissionPanel": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        83,
+                        36
+                    ]
+                }
+            }
+        }
+    },
+    "StateRecoveryCloseBrochurePanel": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        83,
+                        36
+                    ]
+                }
+            }
+        }
+    },
+    "AccountProfileCargoCapacityStart": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click"
+            }
+        }
+    },
+    "AccountProfileCargoOpenCurrentCityFallback": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        1270,
+                        494
+                    ]
+                }
+            }
+        }
+    },
+    "AccountProfileCargoTapTradeOutlet": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target_offset": [
+                        0,
+                        65
+                    ]
+                }
+            }
+        }
+    },
+    "AccountProfileCargoOpenBuyPage": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click"
+            }
+        }
+    },
+    "AccountProfileCargoReturnHome": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click"
+            }
+        }
+    },
+    "AccountProfileCityUnlockStart": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click"
+            }
+        }
+    },
+    "AccountProfileCityUnlockZoomOut001": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        1152,
+                        584
+                    ]
+                }
+            }
+        }
+    },
+    "AccountProfileCityUnlockProbe001SelectByTemplate": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target_offset": [
+                        0,
+                        -18
+                    ]
+                }
+            }
+        }
+    },
+    "AccountProfileCityUnlockProbe001SelectByText": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target_offset": [
+                        0,
+                        -18
+                    ]
+                }
+            }
+        }
+    },
+    "AccountProfileCityUnlockProbe001CloseDetail": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        80,
+                        360
+                    ]
+                }
+            }
+        }
+    },
+    "AccountProfileCityUnlockProbe002SelectByText": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target_offset": [
+                        0,
+                        -18
+                    ]
+                }
+            }
+        }
+    },
+    "AccountProfileCityUnlockProbe002CloseDetail": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        80,
+                        360
+                    ]
+                }
+            }
+        }
+    },
+    "AccountProfileCityUnlockProbe003SelectByTemplate": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target_offset": [
+                        0,
+                        -18
+                    ]
+                }
+            }
+        }
+    },
+    "AccountProfileCityUnlockProbe003SelectByText": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target_offset": [
+                        0,
+                        -18
+                    ]
+                }
+            }
+        }
+    },
+    "AccountProfileCityUnlockProbe003CloseDetail": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        80,
+                        360
+                    ]
+                }
+            }
+        }
+    },
+    "AccountProfileCityUnlockProbe004SelectByTemplate": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target_offset": [
+                        0,
+                        -18
+                    ]
+                }
+            }
+        }
+    },
+    "AccountProfileCityUnlockProbe004SelectByText": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target_offset": [
+                        0,
+                        -18
+                    ]
+                }
+            }
+        }
+    },
+    "AccountProfileCityUnlockProbe004CloseDetail": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        80,
+                        360
+                    ]
+                }
+            }
+        }
+    },
+    "AccountProfileCityUnlockProbe005SelectByTemplate": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target_offset": [
+                        0,
+                        -18
+                    ]
+                }
+            }
+        }
+    },
+    "AccountProfileCityUnlockProbe005SelectByText": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target_offset": [
+                        0,
+                        -18
+                    ]
+                }
+            }
+        }
+    },
+    "AccountProfileCityUnlockProbe005CloseDetail": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        80,
+                        360
+                    ]
+                }
+            }
+        }
+    },
+    "AccountProfileCityUnlockProbe006SelectByTemplate": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target_offset": [
+                        0,
+                        -18
+                    ]
+                }
+            }
+        }
+    },
+    "AccountProfileCityUnlockProbe006SelectByText": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target_offset": [
+                        0,
+                        -18
+                    ]
+                }
+            }
+        }
+    },
+    "AccountProfileCityUnlockProbe006CloseDetail": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        80,
+                        360
+                    ]
+                }
+            }
+        }
+    },
+    "AccountProfileCityUnlockProbe007SelectByTemplate": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target_offset": [
+                        0,
+                        -18
+                    ]
+                }
+            }
+        }
+    },
+    "AccountProfileCityUnlockProbe007SelectByText": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target_offset": [
+                        0,
+                        -18
+                    ]
+                }
+            }
+        }
+    },
+    "AccountProfileCityUnlockProbe007CloseDetail": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        80,
+                        360
+                    ]
+                }
+            }
+        }
+    },
+    "AccountProfileCityUnlockProbe008SelectByTemplate": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target_offset": [
+                        0,
+                        -18
+                    ]
+                }
+            }
+        }
+    },
+    "AccountProfileCityUnlockProbe008SelectByText": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target_offset": [
+                        0,
+                        -18
+                    ]
+                }
+            }
+        }
+    },
+    "AccountProfileCityUnlockProbe008CloseDetail": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        80,
+                        360
+                    ]
+                }
+            }
+        }
+    },
+    "AccountProfileCityUnlockProbe009SelectByTemplate": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target_offset": [
+                        0,
+                        -18
+                    ]
+                }
+            }
+        }
+    },
+    "AccountProfileCityUnlockProbe009SelectByText": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target_offset": [
+                        0,
+                        -18
+                    ]
+                }
+            }
+        }
+    },
+    "AccountProfileCityUnlockProbe009CloseDetail": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        80,
+                        360
+                    ]
+                }
+            }
+        }
+    },
+    "AccountProfileCityUnlockProbe010SelectByTemplate": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target_offset": [
+                        0,
+                        -18
+                    ]
+                }
+            }
+        }
+    },
+    "AccountProfileCityUnlockProbe010SelectByText": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target_offset": [
+                        0,
+                        -18
+                    ]
+                }
+            }
+        }
+    },
+    "AccountProfileCityUnlockProbe010CloseDetail": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        80,
+                        360
+                    ]
+                }
+            }
+        }
+    },
+    "AccountProfileCityUnlockProbe011SelectByTemplate": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target_offset": [
+                        0,
+                        -18
+                    ]
+                }
+            }
+        }
+    },
+    "AccountProfileCityUnlockProbe011SelectByText": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target_offset": [
+                        0,
+                        -18
+                    ]
+                }
+            }
+        }
+    },
+    "AccountProfileCityUnlockProbe011CloseDetail": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        80,
+                        360
+                    ]
+                }
+            }
+        }
+    },
+    "AccountProfileCityUnlockProbe012SelectByTemplate": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target_offset": [
+                        0,
+                        -18
+                    ]
+                }
+            }
+        }
+    },
+    "AccountProfileCityUnlockProbe012SelectByText": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target_offset": [
+                        0,
+                        -18
+                    ]
+                }
+            }
+        }
+    },
+    "AccountProfileCityUnlockProbe012CloseDetail": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        80,
+                        360
+                    ]
+                }
+            }
+        }
+    },
+    "AccountProfileCityUnlockProbe013SelectByTemplate": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target_offset": [
+                        0,
+                        -18
+                    ]
+                }
+            }
+        }
+    },
+    "AccountProfileCityUnlockProbe013SelectByText": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target_offset": [
+                        0,
+                        -18
+                    ]
+                }
+            }
+        }
+    },
+    "AccountProfileCityUnlockProbe013CloseDetail": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        80,
+                        360
+                    ]
+                }
+            }
+        }
+    },
+    "AccountProfileCityUnlockProbe014SelectByTemplate": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target_offset": [
+                        0,
+                        -18
+                    ]
+                }
+            }
+        }
+    },
+    "AccountProfileCityUnlockProbe014SelectByText": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target_offset": [
+                        0,
+                        -18
+                    ]
+                }
+            }
+        }
+    },
+    "AccountProfileCityUnlockProbe014CloseDetail": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        80,
+                        360
+                    ]
+                }
+            }
+        }
+    },
+    "AccountProfileCityUnlockProbe015SelectByTemplate": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target_offset": [
+                        0,
+                        -18
+                    ]
+                }
+            }
+        }
+    },
+    "AccountProfileCityUnlockProbe015SelectByText": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target_offset": [
+                        0,
+                        -18
+                    ]
+                }
+            }
+        }
+    },
+    "AccountProfileCityUnlockProbe015CloseDetail": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        80,
+                        360
+                    ]
+                }
+            }
+        }
+    },
+    "AccountProfileCityUnlockProbe016SelectByTemplate": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target_offset": [
+                        0,
+                        -18
+                    ]
+                }
+            }
+        }
+    },
+    "AccountProfileCityUnlockProbe016SelectByText": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target_offset": [
+                        0,
+                        -18
+                    ]
+                }
+            }
+        }
+    },
+    "AccountProfileCityUnlockProbe016CloseDetail": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        80,
+                        360
+                    ]
+                }
+            }
+        }
+    },
+    "AccountProfileCityUnlockProbe017SelectByTemplate": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target_offset": [
+                        0,
+                        -18
+                    ]
+                }
+            }
+        }
+    },
+    "AccountProfileCityUnlockProbe017SelectByText": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target_offset": [
+                        0,
+                        -18
+                    ]
+                }
+            }
+        }
+    },
+    "AccountProfileCityUnlockProbe017CloseDetail": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        80,
+                        360
+                    ]
+                }
+            }
+        }
+    },
+    "AccountProfileCityUnlockProbe018SelectByTemplate": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target_offset": [
+                        0,
+                        -18
+                    ]
+                }
+            }
+        }
+    },
+    "AccountProfileCityUnlockProbe018SelectByText": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target_offset": [
+                        0,
+                        -18
+                    ]
+                }
+            }
+        }
+    },
+    "AccountProfileCityUnlockProbe018CloseDetail": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        80,
+                        360
+                    ]
+                }
+            }
+        }
+    },
+    "AccountProfileCityUnlockReturnHome": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click"
+            }
+        }
+    },
+    "AccountProfileCityUnlockReturnBack": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click"
+            }
+        }
+    },
+    "AccountProfilePrestigeStart": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        155,
+                        675
+                    ]
+                }
+            }
+        }
+    },
+    "AccountProfilePrestigeStartByOcr": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        155,
+                        675
+                    ]
+                }
+            }
+        }
+    },
+    "AccountProfilePrestigeTapMoreInfo": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click"
+            }
+        }
+    },
+    "AccountProfilePrestigeTapEye": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click"
+            }
+        }
+    },
+    "AccountProfilePrestigeCloseDialog": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click"
+            }
+        }
+    },
+    "AccountProfilePrestigeClosePanel": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        1020,
+                        520
+                    ]
+                }
+            }
+        }
+    },
+    "AccountProfileRoleResonanceStart": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        1225,
+                        58
+                    ]
+                }
+            }
+        }
+    },
+    "AccountProfileRoleResonanceStartByOcr": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        1225,
+                        58
+                    ]
+                }
+            }
+        }
+    },
+    "AccountProfileRoleResonanceConfirmPopup": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click"
+            }
+        }
+    },
+    "AccountProfileRoleResonanceReturnHome": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click"
+            }
+        }
+    },
+    "ManualTwoCityBusinessCloseDailyCheckInForStartupTravelRecover": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click"
+            }
+        }
+    },
+    "ManualTwoCityBusinessCloseRestAreaMenuForCurrentCity": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        83,
+                        36
+                    ]
+                }
+            }
+        }
+    },
+    "ManualTwoCityBusinessOpenBuyPage": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click"
+            }
+        }
+    },
+    "ManualTwoCityBusinessOpenBuyPageRetry": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click"
+            }
+        }
+    },
+    "ManualTwoCityBusinessOpenSellPage": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click"
+            }
+        }
+    },
+    "ManualTwoCityBusinessOpenSellPageRetry": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click"
+            }
+        }
+    },
+    "ManualTwoCityBusinessCloseDailyCheckInForBuyPageReady": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click"
+            }
+        }
+    },
+    "ManualTwoCityBusinessInitialTransferTapBuyAll": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click"
+            }
+        }
+    },
+    "ManualTwoCityBusinessInitialTransferTapBuyAllRetry": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click"
+            }
+        }
+    },
+    "ManualTwoCityBusinessInitialTransferTapBuyButton": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click"
+            }
+        }
+    },
+    "ManualTwoCityBusinessCloseDailyCheckInForSellPageReady": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click"
+            }
+        }
+    },
+    "ManualTwoCityBusinessCloseDailyCheckInForBuyDrinkCheck": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click"
+            }
+        }
+    },
+    "ManualTwoCityBusinessCloseDailyCheckInForSellDrinkCheck": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click"
+            }
+        }
+    },
+    "ManualTwoCityBusinessOpenStrengthForDrink": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        974,
+                        32
+                    ]
+                }
+            }
+        }
+    },
+    "ManualTwoCityBusinessDismissDrinkInfoBeforeLoop": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        640,
+                        650
+                    ]
+                }
+            }
+        }
+    },
+    "ManualTwoCityBusinessDismissDrinkInfoAndSkip": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        640,
+                        650
+                    ]
+                }
+            }
+        }
+    },
+    "ManualTwoCityBusinessCloseDrinkResultAfterDrink": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        640,
+                        500
+                    ]
+                }
+            }
+        }
+    },
+    "ManualTwoCityBusinessReturnCityAfterDrink": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        83,
+                        36
+                    ]
+                }
+            }
+        }
+    },
+    "ManualTwoCityBusinessReturnCityFromRestAreaAfterDrink": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        83,
+                        36
+                    ]
+                }
+            }
+        }
+    },
+    "ManualTwoCityBusinessReturnCityAfterDrinkSecondBack": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        83,
+                        36
+                    ]
+                }
+            }
+        }
+    },
+    "ManualTwoCityBusinessCloseStrengthAfterDrinkSkipped": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        83,
+                        36
+                    ]
+                }
+            }
+        }
+    },
+    "ManualTwoCityBusinessOpenStrengthForRecovery": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        974,
+                        32
+                    ]
+                }
+            }
+        }
+    },
+    "ManualTwoCityBusinessCloseStrengthPageForTrade": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        83,
+                        36
+                    ]
+                }
+            }
+        }
+    },
+    "ManualTwoCityBusinessStrengthRecoveryResumeAfterFail": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        83,
+                        36
+                    ]
+                }
+            }
+        }
+    },
+    "ManualTwoCityBusinessTapSellAllButton": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click"
+            }
+        }
+    },
+    "ManualTwoCityBusinessTapSellAllRetry001": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click"
+            }
+        }
+    },
+    "ManualTwoCityBusinessTapSellConfirmButton": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click"
+            }
+        }
+    },
+    "ManualTwoCityBusinessSellConfirmPopup": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click"
+            }
+        }
+    },
+    "ManualTwoCityBusinessTapSellConfirmRetry001": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click"
+            }
+        }
+    },
+    "ManualTwoCityBusinessSellMarketChangeConfirmButton": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click"
+            }
+        }
+    },
+    "ManualTwoCityBusinessTapBuyButton": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click"
+            }
+        }
+    },
+    "ManualTwoCityBusinessBuyConfirmPopup": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click"
+            }
+        }
+    },
+    "ManualTwoCityBusinessBuyConfirmRetry001": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click"
+            }
+        }
+    },
+    "ManualTwoCityBusinessBuyConfirmRetry002": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click"
+            }
+        }
+    },
+    "ManualTwoCityBusinessReturnHomeAfterBuy": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click"
+            }
+        }
+    },
+    "ManualTwoCityBusinessOpenRouteMap": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click"
+            }
+        }
+    },
+    "ManualTwoCityBusinessCloseDailyCheckInForRouteMapReady": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        640,
+                        705
+                    ]
+                }
+            }
+        }
+    },
+    "ManualTwoCityBusinessCloseGenericPopupForRouteMapReady": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        640,
+                        705
+                    ]
+                }
+            }
+        }
+    },
+    "ManualTwoCityBusinessRouteMapZoomOut001": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        1152,
+                        584
+                    ]
+                }
+            }
+        }
+    },
+    "ManualTwoCityBusinessDestinationUnavailableCloseAndRetry": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        80,
+                        360
+                    ]
+                }
+            }
+        }
+    },
+    "ManualTwoCityBusinessCloseDailyCheckInForTapGoDestination": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        640,
+                        705
+                    ]
+                }
+            }
+        }
+    },
+    "ManualTwoCityBusinessCloseGenericPopupForTapGoDestination": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        640,
+                        705
+                    ]
+                }
+            }
+        }
+    },
+    "ManualTwoCityBusinessTapGoDestination": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        1080,
+                        642
+                    ]
+                }
+            }
+        }
+    },
+    "ManualTwoCityBusinessTapHighLevelDepartDoNotRemind": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        585,
+                        585
+                    ]
+                }
+            }
+        }
+    },
+    "ManualTwoCityBusinessTapHighLevelDepartConfirm": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click"
+            }
+        }
+    },
+    "ManualTwoCityBusinessTapDepartDoNotRemindWeekly": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target_offset": [
+                        -70,
+                        0
+                    ]
+                }
+            }
+        }
+    },
+    "ManualTwoCityBusinessTapDepartNow": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target_offset": [
+                        170,
+                        0
+                    ]
+                }
+            }
+        }
+    },
+    "ManualTwoCityBusinessCloseDailyCheckInForTravelMonitor": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click"
+            }
+        }
+    },
+    "ManualTwoCityBusinessTrainManageScreenRecovery": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        80,
+                        38
+                    ]
+                }
+            }
+        }
+    },
+    "ManualTwoCityBusinessTapTravelContinue": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        1248,
+                        616
+                    ]
+                }
+            }
+        }
+    },
+    "ManualTwoCityBusinessTravelGenericPopup": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        640,
+                        705
+                    ]
+                }
+            }
+        }
+    },
+    "ManualTwoCityBusinessTravelStartScreen": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click"
+            }
+        }
+    },
+    "ManualTwoCityBusinessTapTravelResourceDownloadConfirm": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click"
+            }
+        }
+    },
+    "ManualTwoCityBusinessRouteEventAttackTap": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click"
+            }
+        }
+    },
+    "ManualTwoCityBusinessRouteEventPanelTap": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        1009,
+                        251
+                    ]
+                }
+            }
+        }
+    },
+    "ManualTwoCityBusinessRouteEventContinueTap": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        640,
+                        520
+                    ]
+                }
+            }
+        }
+    },
+    "ManualTwoCityBusinessRouteImpactDrillEnabled": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click"
+            }
+        }
+    },
+    "ManualTwoCityBusinessRouteSpeedProjectileEnabled": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click"
+            }
+        }
+    },
+    "ManualTwoCityBusinessRouteSpeedProjectileIcon": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click"
+            }
+        }
+    },
+    "ManualTwoCityBusinessRouteLossReportTap": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        727,
+                        541
+                    ]
+                }
+            }
+        }
+    },
+    "ManualTwoCityBusinessFightStartButton": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        1198,
+                        371
+                    ]
+                }
+            }
+        }
+    },
+    "ManualTwoCityBusinessFightStartByOcr": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        1198,
+                        371
+                    ]
+                }
+            }
+        }
+    },
+    "ManualTwoCityBusinessFightAutoButton": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click"
+            }
+        }
+    },
+    "ManualTwoCityBusinessCloseDailyCheckInForFightMonitor": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click"
+            }
+        }
+    },
+    "ManualTwoCityBusinessFightClearTeamPopupCancel": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [
+                        346,
+                        503
+                    ]
+                }
+            }
+        }
+    },
+    "ManualTwoCityBusinessFightEndButton": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click"
+            }
+        }
+    }
+}

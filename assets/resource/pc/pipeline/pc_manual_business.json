@@ -2,6 +2,9 @@
     "RunManualTwoCityBusiness": {
         "next": "PcManualBusinessCheckFrame"
     },
+    "RunAutoTwoCityBusiness": {
+        "next": "PcAutoBusinessCheckFrame"
+    },
     "PcManualBusinessCheckFrame": {
         "focus": {
             "Node.Action.Failed": "未获得可用的 1280×720 游戏画面。请恢复游戏到前台并保持可见，确认客户区宽高比为 16:9，再重新连接。"
@@ -14,11 +17,41 @@
         },
         "next": "ManualTwoCityBusinessSetOutboundCity"
     },
+    "PcAutoBusinessCheckFrame": {
+        "focus": {
+            "Node.Action.Failed": "未获得可用的 1280×720 游戏画面。请恢复游戏到前台并保持可见，确认客户区宽高比为 16:9，再重新连接。"
+        },
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "pc_manual_business_check_frame"
+            }
+        },
+        "next": "AutoTwoCityBusinessSetPriorityCities"
+    },
     "ManualTwoCityBusinessArrivedVisitCity": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [900, 357]
+                }
+            }
+        },
         "next": ["ManualTwoCityBusinessDestinationCityReady", "ManualTwoCityBusinessArrivedMainMap"],
         "on_error": "PcManualBusinessArrivalFailed"
     },
     "ManualTwoCityBusinessArrivedVisitCityByStatus": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "guarded_click",
+                "custom_action_param": {
+                    "target": [900, 357]
+                }
+            }
+        },
         "next": ["ManualTwoCityBusinessDestinationCityReady", "ManualTwoCityBusinessArrivedMainMap"],
         "on_error": "PcManualBusinessArrivalFailed"
     },

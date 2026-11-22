@@ -1,0 +1,454 @@
+{
+    "task": [
+        {
+            "name": "SecurityAgency",
+            "label": "铁安局自动作战",
+            "entry": "SecurityAgencyLoop",
+            "description": "支持从列车大厅自动经「作战终端 -> 铁安局」进入远程总控界面，逐城逐关自动切换未满 100% 的驱逐任务直至全部 100%；也兼容直接停在本地城市铁安局界面按声望等级停机。",
+            "group": [
+                "combat"
+            ],
+            "resource": [
+                "official"
+            ],
+            "controller": [
+                "ADB",
+                "Win32",
+                "Win32BackgroundWindowPos",
+                "Win32BackgroundCursorPos"
+            ],
+            "option": [
+                "SecurityAutoEnterTerminal",
+                "SecurityTargetReputationLevel",
+                "SecurityWhenAllProgressComplete",
+                "SecurityUseClarityMedicine",
+                "SecurityFormationMode",
+                "SecurityBattlePlayMode",
+                "SecurityPreferNativeAuto",
+                "SecurityLeaderSkill"
+            ]
+        }
+    ],
+    "option": {
+        "SecurityAutoEnterTerminal": {
+            "type": "switch",
+            "label": "自动从列车大厅进入作战终端",
+            "description": "开启后（全自动推荐），若停在列车大厅或作战终端界面，会自动点「作战终端 -> 铁安局 -> 驱逐任务」再开始清 100%；关闭则仅在当前铁安局界面内运行。",
+            "default_case": "Yes",
+            "cases": [
+                {
+                    "name": "Yes",
+                    "pipeline_override": {
+                        "SecurityAgencyLobbyEnterTerminal": {
+                            "enabled": true
+                        },
+                        "SecurityAgencyTerminalEnter": {
+                            "enabled": true
+                        }
+                    }
+                },
+                {
+                    "name": "No",
+                    "pipeline_override": {
+                        "SecurityAgencyLobbyEnterTerminal": {
+                            "enabled": false
+                        },
+                        "SecurityAgencyTerminalEnter": {
+                            "enabled": false
+                        }
+                    }
+                }
+            ]
+        },
+        "SecurityTargetReputationLevel": {
+            "type": "select",
+            "label": "目标城市声望等级",
+            "description": "在铁安局界面识别左下角「声望等级」，达到设定等级后自动停止刷取。",
+            "default_case": "Level1",
+            "cases": [
+                {
+                    "name": "Level1",
+                    "label": "1 级（达到即停，推荐）",
+                    "pipeline_override": {
+                        "SecurityAgencyReputationStop": {
+                            "custom_recognition_param": {
+                                "target_level": 1
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Level2",
+                    "label": "2 级（达到即停）",
+                    "pipeline_override": {
+                        "SecurityAgencyReputationStop": {
+                            "custom_recognition_param": {
+                                "target_level": 2
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Level3",
+                    "label": "3 级（达到即停）",
+                    "pipeline_override": {
+                        "SecurityAgencyReputationStop": {
+                            "custom_recognition_param": {
+                                "target_level": 3
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Level5",
+                    "label": "5 级（达到即停）",
+                    "pipeline_override": {
+                        "SecurityAgencyReputationStop": {
+                            "custom_recognition_param": {
+                                "target_level": 5
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Unlimited",
+                    "label": "不限制（持续刷取到体力耗尽）",
+                    "pipeline_override": {
+                        "SecurityAgencyReputationStop": {
+                            "custom_recognition_param": {
+                                "target_level": 0
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "SecurityWhenAllProgressComplete": {
+            "type": "select",
+            "label": "当所有关卡驱逐进度均达 100% 时",
+            "description": "当前关卡右上角驱逐进度达 100% 时会自动切换下方未满关卡；若所有关卡都已 100% 但声望未满，决定继续刷或停止。",
+            "default_case": "ContinueForReputation",
+            "cases": [
+                {
+                    "name": "ContinueForReputation",
+                    "label": "继续刷当前关以累计声望（推荐）",
+                    "pipeline_override": {
+                        "SecurityAgencySwitchTab": {
+                            "custom_recognition_param": {
+                                "stop_when_all_complete": false
+                            },
+                            "custom_action_param": {
+                                "stop_when_all_complete": false
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "StopTask",
+                    "label": "全部 100% 后立即停止",
+                    "pipeline_override": {
+                        "SecurityAgencySwitchTab": {
+                            "custom_recognition_param": {
+                                "stop_when_all_complete": true
+                            },
+                            "custom_action_param": {
+                                "stop_when_all_complete": true
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "SecurityUseClarityMedicine": {
+            "type": "switch",
+            "label": "使用体力药/桦石",
+            "description": "开启后才会显示下方使用次数。次数含义：-1 为无限制，0 为不使用，正数为本轮可用次数；桦石最高 8 次。",
+            "default_case": "No",
+            "cases": [
+                {
+                    "name": "No",
+                    "pipeline_override": {
+                        "SecurityAgencyClarityRecovery": {
+                            "enabled": false
+                        }
+                    }
+                },
+                {
+                    "name": "Yes",
+                    "option": [
+                        "SecurityClarityLimits"
+                    ],
+                    "pipeline_override": {
+                        "SecurityAgencyClarityRecovery": {
+                            "enabled": true
+                        }
+                    }
+                }
+            ]
+        },
+        "SecurityClarityLimits": {
+            "type": "input",
+            "label": "铁安局体力药/桦石使用次数",
+            "description": "本轮任务每成功使用 1 次会扣减可用配额；-1 不限次，0 表示禁用该恢复手段。",
+            "inputs": [
+                {
+                    "name": "lollipop_use_limit",
+                    "label": "仙人掌能量棒棒糖使用次数",
+                    "description": "-1 为无限制，0 为不使用，正数为本轮可用次数。",
+                    "default": "0",
+                    "pipeline_type": "int",
+                    "verify": "^(-1|0|[1-9]\\d*)$",
+                    "pattern_msg": "请输入 -1、0 或正整数。"
+                },
+                {
+                    "name": "roll_use_limit",
+                    "label": "仙人掌跳跳卷使用次数",
+                    "description": "-1 为无限制，0 为不使用，正数为本轮可用次数。",
+                    "default": "0",
+                    "pipeline_type": "int",
+                    "verify": "^(-1|0|[1-9]\\d*)$",
+                    "pattern_msg": "请输入 -1、0 或正整数。"
+                },
+                {
+                    "name": "candy_use_limit",
+                    "label": "仙人掌能量跳糖使用次数",
+                    "description": "-1 为无限制，0 为不使用，正数为本轮可用次数。",
+                    "default": "0",
+                    "pipeline_type": "int",
+                    "verify": "^(-1|0|[1-9]\\d*)$",
+                    "pattern_msg": "请输入 -1、0 或正整数。"
+                },
+                {
+                    "name": "huashi_use_limit",
+                    "label": "桦石使用次数（最高 8）",
+                    "description": "-1 为无限制，0 为不使用，1-8 为本轮可用次数。",
+                    "default": "0",
+                    "pipeline_type": "int",
+                    "verify": "^(-1|[0-8])$",
+                    "pattern_msg": "请输入 -1 或 0-8。"
+                }
+            ],
+            "pipeline_override": {
+                "SecurityAgencyClarityRecovery": {
+                    "custom_action_param": {
+                        "lollipop_use_limit": "{lollipop_use_limit}",
+                        "roll_use_limit": "{roll_use_limit}",
+                        "candy_use_limit": "{candy_use_limit}",
+                        "huashi_use_limit": "{huashi_use_limit}"
+                    }
+                }
+            }
+        },
+        "SecurityFormationMode": {
+            "type": "select",
+            "label": "编队自动选人",
+            "default_case": "Off",
+            "cases": [
+                {
+                    "name": "Off",
+                    "label": "不自动改编队（直接点开始作战）",
+                    "pipeline_override": {
+                        "SecurityAgencyFormationEmpty": {
+                            "enabled": false
+                        },
+                        "SecurityAgencyFormationStrict": {
+                            "enabled": false
+                        }
+                    }
+                },
+                {
+                    "name": "EmptyOnly",
+                    "label": "仅存在空位时补齐（保留现有/手动配队）",
+                    "option": [
+                        "SecurityFormationRoles"
+                    ],
+                    "pipeline_override": {
+                        "SecurityAgencyFormationEmpty": {
+                            "enabled": true
+                        },
+                        "SecurityAgencyFormationStrict": {
+                            "enabled": false
+                        }
+                    }
+                },
+                {
+                    "name": "Strict",
+                    "label": "严格按名单自动编队",
+                    "option": [
+                        "SecurityFormationRoles"
+                    ],
+                    "pipeline_override": {
+                        "SecurityAgencyFormationEmpty": {
+                            "enabled": false
+                        },
+                        "SecurityAgencyFormationStrict": {
+                            "enabled": true
+                        }
+                    }
+                }
+            ]
+        },
+        "SecurityFormationRoles": {
+            "type": "input",
+            "label": "编队目标角色名单",
+            "description": "按优先级填写角色全名，逗号或顿号分隔；留空则保持当前阵容不调整。",
+            "inputs": [
+                {
+                    "name": "target_roles",
+                    "label": "目标名单",
+                    "default": "",
+                    "pipeline_type": "string"
+                }
+            ],
+            "pipeline_override": {
+                "SecurityAgencyFormationQuickSelect": {
+                    "custom_action_param": {
+                        "target_roles": "{target_roles}",
+                        "max_team_size": 5
+                    }
+                },
+                "SecurityAgencyFormationEmpty": {
+                    "custom_recognition_param": {
+                        "target_roles": "{target_roles}",
+                        "strict_match": false
+                    }
+                },
+                "SecurityAgencyFormationStrict": {
+                    "custom_recognition_param": {
+                        "target_roles": "{target_roles}",
+                        "strict_match": true
+                    }
+                }
+            }
+        },
+        "SecurityBattlePlayMode": {
+            "type": "select",
+            "label": "手牌出牌模式",
+            "description": "当关卡原生自动未开启或不可用时接管手牌。",
+            "default_case": "FastRush",
+            "cases": [
+                {
+                    "name": "FastRush",
+                    "label": "快斩模式（大招就绪秒放 + 随机极速甩牌）",
+                    "pipeline_override": {
+                        "SecurityAgencyBattleAutoOptPlayMode": {
+                            "attach": {
+                                "play_mode": "fast_rush"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Weighted",
+                    "label": "权重模式（实验原型·尚未完善，几乎不可用）",
+                    "option": [
+                        "SecurityMinCost"
+                    ],
+                    "pipeline_override": {
+                        "SecurityAgencyBattleAutoOptPlayMode": {
+                            "attach": {
+                                "play_mode": "weighted"
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "SecurityPreferNativeAuto": {
+            "type": "switch",
+            "label": "优先启用原生自动战斗",
+            "description": "开启后，支持原生自动的关卡将自动开启游戏原生自动并等待结束；关闭则改由手牌识别出牌。",
+            "default_case": "Yes",
+            "cases": [
+                {
+                    "name": "Yes",
+                    "pipeline_override": {
+                        "SecurityAgencyBattleAutoOptPreferNativeAuto": {
+                            "attach": {
+                                "prefer_native_auto": true
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "No",
+                    "pipeline_override": {
+                        "SecurityAgencyBattleAutoOptPreferNativeAuto": {
+                            "attach": {
+                                "prefer_native_auto": false
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "SecurityLeaderSkill": {
+            "type": "switch",
+            "label": "手牌接管时优先释放队长技",
+            "description": "开启后，手牌接管阶段将在队长得意技就绪时自动拖放释放。",
+            "default_case": "Yes",
+            "cases": [
+                {
+                    "name": "Yes",
+                    "pipeline_override": {
+                        "SecurityAgencyBattleAutoOptLeaderSkill": {
+                            "attach": {
+                                "prefer_leader_skill": true
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "No",
+                    "pipeline_override": {
+                        "SecurityAgencyBattleAutoOptLeaderSkill": {
+                            "attach": {
+                                "prefer_leader_skill": false
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "SecurityMinCost": {
+            "type": "select",
+            "label": "权重模式最低费用门槛",
+            "default_case": "Cost2",
+            "cases": [
+                {
+                    "name": "Cost0",
+                    "label": "0 费起出（有牌即出）",
+                    "pipeline_override": {
+                        "SecurityAgencyBattleAutoOptMinCost": {
+                            "attach": {
+                                "min_cost_to_play": 0
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Cost2",
+                    "label": "2 费起出（推荐）",
+                    "pipeline_override": {
+                        "SecurityAgencyBattleAutoOptMinCost": {
+                            "attach": {
+                                "min_cost_to_play": 2
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Cost4",
+                    "label": "4 费起出（蓄费）",
+                    "pipeline_override": {
+                        "SecurityAgencyBattleAutoOptMinCost": {
+                            "attach": {
+                                "min_cost_to_play": 4
+                            }
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}

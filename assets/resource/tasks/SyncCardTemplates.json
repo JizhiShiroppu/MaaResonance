@@ -1,0 +1,22 @@
+{
+    "task": [
+        {
+            "name": "SyncCardTemplates",
+            "label": "采集卡牌识别模板与权重（实验原型）",
+            "entry": "SyncCardTemplatesStart",
+            "description": "【实验原型，尚未完善，目前几乎不可用】在编队界面自动打开“Box托管配置器”，采集当前队伍的卡牌菱形图标、费用与自定义权重顺序并缓存到本地，仅供权重模式调试使用。",
+            "group": [
+                "experimental"
+            ],
+            "resource": [
+                "official"
+            ],
+            "controller": [
+                "ADB",
+                "Win32",
+                "Win32BackgroundWindowPos",
+                "Win32BackgroundCursorPos"
+            ]
+        }
+    ]
+}

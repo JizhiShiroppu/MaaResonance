@@ -1,0 +1,606 @@
+{
+    "RegionalCombatLoop": {
+        "recognition": "DirectHit",
+        "action": "DoNothing",
+        "rate_limit": 900,
+        "timeout": 86400000,
+        "next": [
+            "[JumpBack]CommonNetworkPoorGuard",
+            "RegionalCombatIsDone",
+            "RegionalCombatStorySkip",
+            "RegionalCombatBattleAuto",
+            "RegionalCombatClarityRecovery",
+            "RegionalCombatClarityDisabledExit",
+            "RegionalCombatLowClarityPrompt",
+            "RegionalCombatDifficultyWarnPrompt",
+            "RegionalCombatDefeatStop",
+            "RegionalCombatSettleNextTemplate",
+            "RegionalCombatSettleNextOcr",
+            "RegionalCombatSettleMission",
+            "RegionalCombatSettleVictoryTap",
+            "RegionalCombatFormationEmpty",
+            "RegionalCombatFormationStrict",
+            "RegionalCombatFormationReadyCheck",
+            "RegionalCombatNeedsAdvance",
+            "RegionalCombatEnterCombat",
+            "RegionalCombatTerminalEnter",
+            "RegionalCombatActivityHubSwitch",
+            "RegionalCombatLobbyEnterTerminal"
+        ],
+        "on_error": [
+            "RegionalCombatLoop"
+        ]
+    },
+    "RegionalCombatOptScope": {
+        "action": "DoNothing",
+        "attach": {
+            "scope": "all_cities"
+        }
+    },
+    "RegionalCombatOptCityOrder": {
+        "action": "DoNothing",
+        "attach": {
+            "city_order": "fewest_stages_first"
+        }
+    },
+    "RegionalCombatOptMaxEnemyLevel": {
+        "action": "DoNothing",
+        "attach": {
+            "max_enemy_level": 0,
+            "use_custom_max_enemy_level": false
+        }
+    },
+    "RegionalCombatOptCustomMaxEnemyLevel": {
+        "action": "DoNothing",
+        "attach": {
+            "custom_max_enemy_level": 60
+        }
+    },
+    "RegionalCombatOptRunMode": {
+        "action": "DoNothing",
+        "attach": {
+            "run_mode": "unlimited"
+        }
+    },
+    "RegionalCombatOptRunCount": {
+        "action": "DoNothing",
+        "attach": {
+            "run_count": 5
+        }
+    },
+    "RegionalCombatOptUseMedicine": {
+        "action": "DoNothing",
+        "attach": {
+            "use_medicine": false
+        }
+    },
+    "RegionalCombatIsDone": {
+        "recognition": "Custom",
+        "custom_recognition": "regional_combat_is_done",
+        "action": "DoNothing",
+        "next": [
+            "RegionalCombatComplete"
+        ]
+    },
+    "RegionalCombatStorySkip": {
+        "enabled": true,
+        "recognition": "OCR",
+        "expected": [
+            "跳过"
+        ],
+        "roi": [
+            1100,
+            0,
+            180,
+            90
+        ],
+        "action": "Custom",
+        "custom_action": "story_skip_loop",
+        "custom_action_param": {
+            "choice_index": 0,
+            "max_steps": 120
+        },
+        "post_delay": 600,
+        "next": [
+            "RegionalCombatLoop"
+        ]
+    },
+    "RegionalCombatBattleAuto": {
+        "enabled": true,
+        "recognition": "OCR",
+        "expected": [
+            "MAX"
+        ],
+        "roi": [
+            1095,
+            655,
+            110,
+            60
+        ],
+        "action": "Custom",
+        "custom_action": "battle_autoplay_loop",
+        "custom_action_param": {
+            "play_mode": "fast_rush",
+            "prefer_native_auto": true,
+            "prefer_leader_skill": true,
+            "cost_preference": "left_to_right",
+            "min_cost_to_play": 2,
+            "discard_when_stuck_at_cost": 10,
+            "card_weights": {},
+            "disabled_cards": [],
+            "max_steps": 240
+        },
+        "post_delay": 600,
+        "next": [
+            "RegionalCombatLoop"
+        ]
+    },
+    "RegionalCombatBattleAutoOptPlayMode": {
+        "action": "DoNothing",
+        "attach": {
+            "play_mode": "fast_rush"
+        }
+    },
+    "RegionalCombatBattleAutoOptPreferNativeAuto": {
+        "action": "DoNothing",
+        "attach": {
+            "prefer_native_auto": true
+        }
+    },
+    "RegionalCombatBattleAutoOptLeaderSkill": {
+        "action": "DoNothing",
+        "attach": {
+            "prefer_leader_skill": true
+        }
+    },
+    "RegionalCombatBattleAutoOptMinCost": {
+        "action": "DoNothing",
+        "attach": {
+            "min_cost_to_play": 2
+        }
+    },
+    "RegionalCombatClarityRecovery": {
+        "enabled": false,
+        "recognition": "OCR",
+        "expected": [
+            "请选择恢复方式"
+        ],
+        "roi": [
+            280,
+            320,
+            320,
+            90
+        ],
+        "action": "Custom",
+        "custom_action": "clarity_recovery_action",
+        "custom_action_param": {
+            "lollipop_use_limit": 0,
+            "roll_use_limit": 0,
+            "candy_use_limit": 0,
+            "huashi_use_limit": 0
+        },
+        "post_delay": 700,
+        "next": [
+            "RegionalCombatLoop"
+        ],
+        "on_error": [
+            "RegionalCombatClarityAbort"
+        ]
+    },
+    "RegionalCombatClarityDisabledExit": {
+        "recognition": "OCR",
+        "expected": [
+            "请选择恢复方式"
+        ],
+        "roi": [
+            280,
+            320,
+            320,
+            90
+        ],
+        "action": "Custom",
+        "custom_action": "regional_combat_clarity_abort",
+        "next": [
+            "RegionalCombatComplete"
+        ]
+    },
+    "RegionalCombatClarityAbort": {
+        "recognition": "DirectHit",
+        "action": "Custom",
+        "custom_action": "regional_combat_clarity_abort",
+        "next": [
+            "RegionalCombatComplete"
+        ]
+    },
+    "RegionalCombatLowClarityPrompt": {
+        "recognition": "OCR",
+        "expected": [
+            "澄明度不足"
+        ],
+        "roi": [
+            280,
+            260,
+            720,
+            180
+        ],
+        "action": "Custom",
+        "custom_action": "regional_combat_handle_low_clarity",
+        "post_delay": 700,
+        "next": [
+            "RegionalCombatLoop"
+        ]
+    },
+    "RegionalCombatDifficultyWarnPrompt": {
+        "recognition": "OCR",
+        "expected": [
+            "难度过高",
+            "是否仍要继续挑战"
+        ],
+        "roi": [
+            300,
+            260,
+            680,
+            180
+        ],
+        "action": "DoNothing",
+        "next": [
+            "RegionalCombatDifficultyWarnConfirm"
+        ]
+    },
+    "RegionalCombatDifficultyWarnConfirm": {
+        "recognition": "OCR",
+        "expected": [
+            "确认",
+            "确定"
+        ],
+        "roi": [
+            640,
+            440,
+            560,
+            120
+        ],
+        "action": "Custom",
+        "custom_action": "guarded_click",
+        "post_delay": 700,
+        "next": [
+            "RegionalCombatLoop"
+        ],
+        "on_error": [
+            "RegionalCombatLoop"
+        ]
+    },
+    "RegionalCombatDefeatStop": {
+        "recognition": "OCR",
+        "expected": [
+            "作战失败",
+            "挑战失败",
+            "重新挑战"
+        ],
+        "roi": [
+            0,
+            220,
+            1280,
+            490
+        ],
+        "action": "StopTask",
+        "focus": {
+            "Node.Action.Succeeded": "【区域作战中心】检测到作战失败，已自动停止，请检查编队、练度或敌方等级上限。"
+        }
+    },
+    "RegionalCombatSettleNextTemplate": {
+        "recognition": "TemplateMatch",
+        "template": "fight/end_fight.png",
+        "threshold": 0.88,
+        "roi": [
+            1040,
+            500,
+            240,
+            220
+        ],
+        "action": "Custom",
+        "custom_action": "regional_combat_settle_next",
+        "post_delay": 1000,
+        "next": [
+            "RegionalCombatLoop"
+        ]
+    },
+    "RegionalCombatSettleNextOcr": {
+        "recognition": "OCR",
+        "expected": [
+            "下一步",
+            "继续",
+            "离开"
+        ],
+        "roi": [
+            1040,
+            500,
+            240,
+            220
+        ],
+        "action": "Custom",
+        "custom_action": "regional_combat_settle_next",
+        "post_delay": 1000,
+        "next": [
+            "RegionalCombatLoop"
+        ]
+    },
+    "RegionalCombatSettleMission": {
+        "recognition": "OCR",
+        "expected": [
+            "触碰空白区域退出",
+            "点击空白区域退出",
+            "点击空白处关闭",
+            "点击任意位置继续",
+            "触碰屏幕继续",
+            "任务完成",
+            "MISSION COMPLETED",
+            "通关记录",
+            "获得物品"
+        ],
+        "roi": [
+            120,
+            40,
+            1040,
+            660
+        ],
+        "action": "Custom",
+        "custom_action": "guarded_click",
+        "custom_action_param": {
+            "target": [
+                640,
+                120
+            ]
+        },
+        "post_delay": 900,
+        "next": [
+            "RegionalCombatLoop"
+        ]
+    },
+    "RegionalCombatSettleVictoryTap": {
+        "recognition": "OCR",
+        "expected": [
+            "作战胜利",
+            "SUCCESSFUL",
+            "COMBAT",
+            "获得道具"
+        ],
+        "roi": [
+            120,
+            160,
+            1040,
+            460
+        ],
+        "action": "Custom",
+        "custom_action": "guarded_click",
+        "custom_action_param": {
+            "target": [
+                640,
+                660
+            ]
+        },
+        "post_delay": 900,
+        "next": [
+            "RegionalCombatLoop"
+        ]
+    },
+    "RegionalCombatFormationEmpty": {
+        "enabled": false,
+        "recognition": "Custom",
+        "custom_recognition": "team_formation_needs_update",
+        "custom_recognition_param": {
+            "target_roles": "",
+            "strict_match": false
+        },
+        "action": "Custom",
+        "custom_action": "guarded_click",
+        "post_delay": 700,
+        "next": [
+            "RegionalCombatFormationQuickSelect"
+        ]
+    },
+    "RegionalCombatFormationStrict": {
+        "enabled": false,
+        "recognition": "Custom",
+        "custom_recognition": "team_formation_needs_update",
+        "custom_recognition_param": {
+            "target_roles": "",
+            "strict_match": true
+        },
+        "action": "Custom",
+        "custom_action": "guarded_click",
+        "post_delay": 700,
+        "next": [
+            "RegionalCombatFormationQuickSelect"
+        ]
+    },
+    "RegionalCombatFormationQuickSelect": {
+        "recognition": "OCR",
+        "expected": [
+            "获取时间",
+            "稀有度",
+            "确认"
+        ],
+        "roi": [
+            800,
+            0,
+            480,
+            720
+        ],
+        "action": "Custom",
+        "custom_action": "team_formation_quick_select",
+        "custom_action_param": {
+            "target_roles": "",
+            "max_team_size": 5
+        },
+        "post_delay": 300,
+        "next": [
+            "RegionalCombatFormationConfirm"
+        ]
+    },
+    "RegionalCombatFormationConfirm": {
+        "recognition": "OCR",
+        "expected": [
+            "确认"
+        ],
+        "roi": [
+            960,
+            610,
+            260,
+            90
+        ],
+        "action": "Custom",
+        "custom_action": "guarded_click",
+        "post_delay": 700,
+        "next": [
+            "RegionalCombatFormationStartBattle",
+            "RegionalCombatLoop"
+        ]
+    },
+    "RegionalCombatFormationReadyCheck": {
+        "recognition": "OCR",
+        "expected": [
+            "快速编队",
+            "快速编",
+            "清空编队"
+        ],
+        "roi": [
+            1000,
+            15,
+            270,
+            90
+        ],
+        "action": "DoNothing",
+        "next": [
+            "RegionalCombatFormationStartBattle",
+            "RegionalCombatLoop"
+        ]
+    },
+    "RegionalCombatFormationStartBattle": {
+        "recognition": "OCR",
+        "expected": [
+            "START BATTLE",
+            "开始作战",
+            "开始",
+            "作战"
+        ],
+        "roi": [
+            1100,
+            230,
+            180,
+            360
+        ],
+        "action": "Custom",
+        "custom_action": "guarded_click",
+        "post_delay": 1200,
+        "next": [
+            "RegionalCombatLoop"
+        ]
+    },
+    "RegionalCombatNeedsAdvance": {
+        "recognition": "Custom",
+        "custom_recognition": "regional_combat_needs_advance",
+        "action": "Custom",
+        "custom_action": "regional_combat_advance",
+        "post_delay": 700,
+        "next": [
+            "RegionalCombatLoop"
+        ],
+        "on_error": [
+            "RegionalCombatAllCompleteFinish"
+        ]
+    },
+    "RegionalCombatAllCompleteFinish": {
+        "recognition": "DirectHit",
+        "action": "DoNothing",
+        "focus": {
+            "Node.Action.Succeeded": "【区域作战中心】所有符合条件的已解锁车站均已推进完毕，任务完成。"
+        }
+    },
+    "RegionalCombatEnterCombat": {
+        "recognition": "OCR",
+        "expected": [
+            "前往作战"
+        ],
+        "roi": [
+            950,
+            560,
+            265,
+            65
+        ],
+        "action": "Custom",
+        "custom_action": "guarded_click",
+        "post_delay": 1200,
+        "next": [
+            "RegionalCombatLoop"
+        ]
+    },
+    "RegionalCombatTerminalEnter": {
+        "enabled": true,
+        "recognition": "Custom",
+        "custom_recognition": "regional_combat_terminal_card",
+        "action": "Custom",
+        "custom_action": "guarded_click",
+        "post_delay": 1000,
+        "next": [
+            "RegionalCombatLoop"
+        ]
+    },
+    "RegionalCombatActivityHubSwitch": {
+        "enabled": true,
+        "recognition": "Custom",
+        "custom_recognition": "regional_combat_activity_hub_need_switch",
+        "action": "Custom",
+        "custom_action": "regional_combat_switch_to_terminal",
+        "post_delay": 900,
+        "next": [
+            "RegionalCombatLoop"
+        ]
+    },
+    "RegionalCombatLobbyEnterTerminal": {
+        "enabled": true,
+        "recognition": "OCR",
+        "expected": [
+            "整备列车",
+            "客运管理",
+            "START ENGINE",
+            "STARTENGINE"
+        ],
+        "roi": [
+            680,
+            580,
+            600,
+            140
+        ],
+        "action": "DoNothing",
+        "next": [
+            "RegionalCombatLobbyClickTerminal",
+            "RegionalCombatLoop"
+        ]
+    },
+    "RegionalCombatLobbyClickTerminal": {
+        "recognition": "OCR",
+        "expected": [
+            "作战终端",
+            "C.R.B.S.E"
+        ],
+        "roi": [
+            960,
+            280,
+            320,
+            180
+        ],
+        "action": "Custom",
+        "custom_action": "guarded_click",
+        "post_delay": 1000,
+        "next": [
+            "RegionalCombatLoop"
+        ]
+    },
+    "RegionalCombatComplete": {
+        "recognition": "DirectHit",
+        "action": "DoNothing",
+        "focus": {
+            "Node.Action.Succeeded": "【区域作战中心】区域作战中心任务已正常结束。"
+        }
+    }
+}

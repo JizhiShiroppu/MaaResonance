@@ -28,6 +28,11 @@ from .recognition import _box_center_point
 from .recognition import _box_xywh
 from .recognition import _recognition_result_items
 from .recognition import _recognition_score
+
+try:
+    from agent.utils.input_guard import run_controller_click_guarded, run_guarded_swipe
+except ImportError:
+    from .input_guard import run_controller_click_guarded, run_guarded_swipe
 from .recognition import _recognition_text
 
 
@@ -84,7 +89,7 @@ def _route_map_brake_tap(
 
     time.sleep(0.08)
     point = (640, 360)
-    context.tasker.controller.post_click(point[0], point[1]).wait()
+    run_controller_click_guarded(context, point[0], point[1], tap_node="RouteMapBrakeTap")
     time.sleep(0.16)
     return {"point": list(point)}
 
@@ -101,7 +106,15 @@ def swipe_route_map_direction(context: Context, direction: str, distance: int, d
         begin, end = (640, 220), (640, 220 + distance)
     else:
         raise ValueError(f"Unsupported map drag direction: {direction}")
-    context.tasker.controller.post_swipe(begin[0], begin[1], end[0], end[1], duration).wait()
+    run_guarded_swipe(
+        context,
+        "RouteMapSwipe",
+        begin,
+        end,
+        duration_ms=duration,
+        end_hold_ms=0,
+        use_controller_post_swipe=True,
+    )
     return {
         "begin": list(begin),
         "end": list(end),
@@ -151,7 +164,7 @@ def destination_detail_panel_hit(context: Context, image: Any) -> bool:
 def close_destination_detail_panel(context: Context, image: Any) -> bool:
     if not destination_detail_panel_hit(context, image):
         return False
-    context.tasker.controller.post_click(80, 360).wait()
+    run_controller_click_guarded(context, 80, 360, tap_node="RouteMapClosePanelTap")
     time.sleep(0.55)
     return True
 
@@ -173,7 +186,7 @@ def close_daily_checkin_popup(context: Context, image: Any) -> dict[str, Any]:
     )
     if not bool(detail and detail.hit):
         return {"closed": False, "reason": "not_hit"}
-    context.tasker.controller.post_click(640, 705).wait()
+    run_controller_click_guarded(context, 640, 705, tap_node="RouteMapDailyCheckinDismissTap")
     time.sleep(0.9)
     return {
         "closed": True,
@@ -243,7 +256,7 @@ def destination_visible_text_probe(
             probe_point = (int(point_value[0]), int(point_value[1]))
             if not is_valid_map_point(probe_point):
                 continue
-            context.tasker.controller.post_click(probe_point[0], probe_point[1]).wait()
+            run_controller_click_guarded(context, probe_point[0], probe_point[1], tap_node="RouteMapVisibleProbeTap")
             time.sleep(0.65)
             verify_image = controller_screencap_image(context)
             verified = destination_panel_title_hit(context, verify_image, destination_city)
@@ -636,7 +649,7 @@ def destination_map_vicinity_probe(context: Context, params: dict[str, Any]) -> 
                         break
                     if not is_valid_map_point(probe_point):
                         continue
-                    context.tasker.controller.post_click(probe_point[0], probe_point[1]).wait()
+                    run_controller_click_guarded(context, probe_point[0], probe_point[1], tap_node="RouteMapCoordProbeTap")
                     clicked_points.append([probe_point[0], probe_point[1]])
                     time.sleep(panel_settle_delay)
                     verify_image = controller_screencap_image(context)
@@ -937,7 +950,7 @@ def destination_map_coordinate_probe(context: Context, params: dict[str, Any]) -
                 probe_results: list[dict[str, Any]] = []
                 attempt["probes"] = probe_results
                 for probe_point in probe_points:
-                    context.tasker.controller.post_click(probe_point[0], probe_point[1]).wait()
+                    run_controller_click_guarded(context, probe_point[0], probe_point[1], tap_node="RouteMapVicinityProbeTap")
                     time.sleep(0.75)
                     verify_image = controller_screencap_image(context)
                     popup = close_daily_checkin_popup(context, verify_image)

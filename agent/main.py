@@ -19,7 +19,24 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 os.chdir(PROJECT_ROOT)
 
+import auto_shop_action
+import battle_autoplay_action
+import calculation_recording_action
+import card_template_action
+import clarity_recovery_action
+import coop_assault_action
+import daily_routine_action
+import event_stage_farm_action
+import event_story_daily_action
+import guarded_click_action
+import mainline_quest_action
+import network_guard_action
 import profile_prestige_action
+import regional_combat_action
+import security_agency_action
+import story_skip_action
+import team_formation_action
+import wake_up_action
 from maa_resonance.logic import profile_parser
 
 

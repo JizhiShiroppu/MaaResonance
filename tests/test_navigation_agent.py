@@ -115,6 +115,44 @@ class NavigationAgentTest(unittest.TestCase):
                 for call in self.controller.post_click.call_args_list:
                     self.assertEqual(call.args, (1190, 489))
 
+    def test_open_current_city_accepts_pc_arrow_and_comma_suffixes(self):
+        def recognize(name, image, override=None):
+            if name.endswith("Loading"):
+                return types.SimpleNamespace(hit=False)
+            if name == "ManualTwoCityBusinessCurrentCityReady":
+                return types.SimpleNamespace(hit=image.page == "city")
+            if name == "ManualTwoCityBusinessOpenCurrentCityFallback":
+                return types.SimpleNamespace(hit=False)
+            if name.endswith("Source"):
+                expected = override[name]["expected"]
+                hit = any(f"^{image.page}$" == pattern or image.page == pattern for pattern in expected)
+                return types.SimpleNamespace(
+                    hit=hit,
+                    all_results=[{"text": image.page, "box": [1120, 460, 140, 48]}] if hit else [],
+                )
+            return types.SimpleNamespace(hit=False)
+
+        def runtime(**kwargs):
+            return run_navigation_transition(**kwargs, clock=lambda: self.now, sleep=self.sleep)
+
+        self.context.run_recognition.side_effect = recognize
+        for label in ("访问城市→", "访问地区，", "访问城市,"):
+            with (
+                self.subTest(label=label),
+                patch.object(trade, "run_navigation_transition", side_effect=runtime),
+                patch.object(trade, "_append_user_log"),
+                patch.object(trade, "_json_payload"),
+            ):
+                self.now = 0
+                self.frames([label, "loading", "city"])
+                self.controller.post_click.reset_mock()
+                ok = trade.ManualTwoCityBusinessOpenCurrentCityAction().run(
+                    self.context,
+                    types.SimpleNamespace(node_name="ManualTwoCityBusinessOpenCurrentCityByOcr"),
+                )
+                self.assertTrue(ok)
+                self.controller.post_click.assert_called_once_with(1190, 484)
+
     def test_pc_manual_entry_requires_a_fresh_normalized_frame(self):
         correct = np.ones((720, 1280, 3), dtype=np.uint8)
         wide = types.SimpleNamespace(shape=(720, 1600, 3))

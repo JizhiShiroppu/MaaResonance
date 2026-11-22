@@ -1,0 +1,548 @@
+{
+    "CalculationRecordingLoop": {
+        "recognition": "DirectHit",
+        "action": "DoNothing",
+        "rate_limit": 900,
+        "timeout": 86400000,
+        "next": [
+            "[JumpBack]CommonNetworkPoorGuard",
+            "CalculationRecordingIsDone",
+            "CalculationRecordingStorySkip",
+            "CalculationRecordingBattleAuto",
+            "CalculationRecordingDefeatStop",
+            "CalculationRecordingSettleRecordModal",
+            "CalculationRecordingSettleNextTemplate",
+            "CalculationRecordingSettleNextOcr",
+            "CalculationRecordingSettleRewardPopup",
+            "CalculationRecordingSettleVictoryTap",
+            "CalculationRecordingTicketShortagePrompt",
+            "CalculationRecordingDifficultyWarnPrompt",
+            "CalculationRecordingFormationEmpty",
+            "CalculationRecordingFormationStrict",
+            "CalculationRecordingFormationReadyCheck",
+            "CalculationRecordingNeedsAdvance",
+            "CalculationRecordingEnterBattle",
+            "CalculationRecordingHubEnter",
+            "CalculationRecordingActivityHubSwitch",
+            "CalculationRecordingLobbyEnterActivity"
+        ],
+        "on_error": [
+            "CalculationRecordingLoop"
+        ]
+    },
+    "CalculationRecordingOptScope": {
+        "action": "DoNothing",
+        "attach": {
+            "scope": "all_bosses"
+        }
+    },
+    "CalculationRecordingOptBossOrder": {
+        "action": "DoNothing",
+        "attach": {
+            "boss_order": "lowest_level_first"
+        }
+    },
+    "CalculationRecordingOptMaxEnemyLevel": {
+        "action": "DoNothing",
+        "attach": {
+            "max_enemy_level": 0,
+            "use_custom_max_enemy_level": false
+        }
+    },
+    "CalculationRecordingOptCustomMaxEnemyLevel": {
+        "action": "DoNothing",
+        "attach": {
+            "custom_max_enemy_level": 60
+        }
+    },
+    "CalculationRecordingOptRunMode": {
+        "action": "DoNothing",
+        "attach": {
+            "run_mode": "unlimited"
+        }
+    },
+    "CalculationRecordingOptRunCount": {
+        "action": "DoNothing",
+        "attach": {
+            "run_count": 5
+        }
+    },
+    "CalculationRecordingIsDone": {
+        "recognition": "Custom",
+        "custom_recognition": "calculation_recording_is_done",
+        "action": "DoNothing",
+        "next": [
+            "CalculationRecordingComplete"
+        ]
+    },
+    "CalculationRecordingStorySkip": {
+        "enabled": true,
+        "recognition": "OCR",
+        "expected": [
+            "跳过"
+        ],
+        "roi": [
+            1100,
+            0,
+            180,
+            90
+        ],
+        "action": "Custom",
+        "custom_action": "story_skip_loop",
+        "custom_action_param": {
+            "choice_index": 0,
+            "max_steps": 120
+        },
+        "post_delay": 600,
+        "next": [
+            "CalculationRecordingLoop"
+        ]
+    },
+    "CalculationRecordingBattleAuto": {
+        "enabled": true,
+        "recognition": "OCR",
+        "expected": [
+            "MAX"
+        ],
+        "roi": [
+            1095,
+            655,
+            110,
+            60
+        ],
+        "action": "Custom",
+        "custom_action": "battle_autoplay_loop",
+        "custom_action_param": {
+            "play_mode": "fast_rush",
+            "prefer_native_auto": true,
+            "prefer_leader_skill": true,
+            "cost_preference": "left_to_right",
+            "min_cost_to_play": 2,
+            "discard_when_stuck_at_cost": 10,
+            "card_weights": {},
+            "disabled_cards": [],
+            "max_steps": 240
+        },
+        "post_delay": 600,
+        "next": [
+            "CalculationRecordingLoop"
+        ]
+    },
+    "CalculationRecordingBattleAutoOptPlayMode": {
+        "action": "DoNothing",
+        "attach": {
+            "play_mode": "fast_rush"
+        }
+    },
+    "CalculationRecordingBattleAutoOptPreferNativeAuto": {
+        "action": "DoNothing",
+        "attach": {
+            "prefer_native_auto": true
+        }
+    },
+    "CalculationRecordingBattleAutoOptLeaderSkill": {
+        "action": "DoNothing",
+        "attach": {
+            "prefer_leader_skill": true
+        }
+    },
+    "CalculationRecordingBattleAutoOptMinCost": {
+        "action": "DoNothing",
+        "attach": {
+            "min_cost_to_play": 2
+        }
+    },
+    "CalculationRecordingDefeatStop": {
+        "recognition": "OCR",
+        "expected": [
+            "作战失败",
+            "挑战失败",
+            "重新挑战"
+        ],
+        "roi": [
+            0,
+            220,
+            1280,
+            490
+        ],
+        "action": "StopTask",
+        "focus": {
+            "Node.Action.Succeeded": "【虚演刻录】检测到作战失败，已自动停止，请检查编队、练度或敌方等级上限。"
+        }
+    },
+    "CalculationRecordingSettleRecordModal": {
+        "recognition": "OCR",
+        "expected": [
+            "通关记录",
+            "只记录5条最佳数据"
+        ],
+        "roi": [
+            320,
+            35,
+            360,
+            95
+        ],
+        "action": "Custom",
+        "custom_action": "calculation_recording_dismiss_record",
+        "post_delay": 700,
+        "next": [
+            "CalculationRecordingLoop"
+        ]
+    },
+    "CalculationRecordingSettleNextTemplate": {
+        "recognition": "TemplateMatch",
+        "template": "fight/end_fight.png",
+        "threshold": 0.85,
+        "roi": [
+            1040,
+            500,
+            240,
+            220
+        ],
+        "action": "Custom",
+        "custom_action": "calculation_recording_settle_next",
+        "post_delay": 1000,
+        "next": [
+            "CalculationRecordingLoop"
+        ]
+    },
+    "CalculationRecordingSettleNextOcr": {
+        "recognition": "OCR",
+        "expected": [
+            "下一步",
+            "一步",
+            "继续",
+            "离开"
+        ],
+        "roi": [
+            1120,
+            630,
+            140,
+            70
+        ],
+        "action": "Custom",
+        "custom_action": "calculation_recording_settle_next",
+        "post_delay": 1000,
+        "next": [
+            "CalculationRecordingLoop"
+        ]
+    },
+    "CalculationRecordingSettleRewardPopup": {
+        "recognition": "OCR",
+        "expected": [
+            "触碰空白区域退出",
+            "点击空白区域退出",
+            "点击空白处关闭",
+            "点击任意位置继续",
+            "触碰屏幕继续",
+            "获得物品",
+            "获得道具"
+        ],
+        "roi": [
+            120,
+            40,
+            1040,
+            660
+        ],
+        "action": "Custom",
+        "custom_action": "guarded_click",
+        "custom_action_param": {
+            "target": [
+                120,
+                360
+            ]
+        },
+        "post_delay": 800,
+        "next": [
+            "CalculationRecordingLoop"
+        ]
+    },
+    "CalculationRecordingSettleVictoryTap": {
+        "recognition": "OCR",
+        "expected": [
+            "作战胜利",
+            "SUCCESSFUL",
+            "COMBAT"
+        ],
+        "roi": [
+            60,
+            360,
+            400,
+            180
+        ],
+        "action": "Custom",
+        "custom_action": "guarded_click",
+        "custom_action_param": {
+            "target": [
+                640,
+                120
+            ]
+        },
+        "post_delay": 800,
+        "next": [
+            "CalculationRecordingLoop"
+        ]
+    },
+    "CalculationRecordingTicketShortagePrompt": {
+        "recognition": "OCR",
+        "expected": [
+            "门票不足",
+            "次数不足",
+            "券不足",
+            "凭证不足",
+            "数量不足"
+        ],
+        "roi": [
+            260,
+            240,
+            760,
+            220
+        ],
+        "action": "Custom",
+        "custom_action": "calculation_recording_ticket_abort",
+        "next": [
+            "CalculationRecordingComplete"
+        ]
+    },
+    "CalculationRecordingDifficultyWarnPrompt": {
+        "recognition": "OCR",
+        "expected": [
+            "难度过高",
+            "是否仍要继续挑战"
+        ],
+        "roi": [
+            300,
+            260,
+            680,
+            180
+        ],
+        "action": "DoNothing",
+        "next": [
+            "CalculationRecordingDifficultyWarnConfirm"
+        ]
+    },
+    "CalculationRecordingDifficultyWarnConfirm": {
+        "recognition": "OCR",
+        "expected": [
+            "确认",
+            "确定"
+        ],
+        "roi": [
+            640,
+            440,
+            560,
+            120
+        ],
+        "action": "Custom",
+        "custom_action": "guarded_click",
+        "post_delay": 700,
+        "next": [
+            "CalculationRecordingLoop"
+        ],
+        "on_error": [
+            "CalculationRecordingLoop"
+        ]
+    },
+    "CalculationRecordingFormationEmpty": {
+        "enabled": false,
+        "recognition": "Custom",
+        "custom_recognition": "team_formation_needs_update",
+        "custom_recognition_param": {
+            "target_roles": "",
+            "strict_match": false
+        },
+        "action": "Custom",
+        "custom_action": "guarded_click",
+        "post_delay": 700,
+        "next": [
+            "CalculationRecordingFormationQuickSelect"
+        ]
+    },
+    "CalculationRecordingFormationStrict": {
+        "enabled": false,
+        "recognition": "Custom",
+        "custom_recognition": "team_formation_needs_update",
+        "custom_recognition_param": {
+            "target_roles": "",
+            "strict_match": true
+        },
+        "action": "Custom",
+        "custom_action": "guarded_click",
+        "post_delay": 700,
+        "next": [
+            "CalculationRecordingFormationQuickSelect"
+        ]
+    },
+    "CalculationRecordingFormationQuickSelect": {
+        "recognition": "OCR",
+        "expected": [
+            "获取时间",
+            "稀有度",
+            "确认"
+        ],
+        "roi": [
+            800,
+            0,
+            480,
+            720
+        ],
+        "action": "Custom",
+        "custom_action": "team_formation_quick_select",
+        "custom_action_param": {
+            "target_roles": "",
+            "max_team_size": 5
+        },
+        "post_delay": 300,
+        "next": [
+            "CalculationRecordingFormationConfirm"
+        ]
+    },
+    "CalculationRecordingFormationConfirm": {
+        "recognition": "OCR",
+        "expected": [
+            "确认"
+        ],
+        "roi": [
+            960,
+            610,
+            260,
+            90
+        ],
+        "action": "Custom",
+        "custom_action": "guarded_click",
+        "post_delay": 700,
+        "next": [
+            "CalculationRecordingFormationStartBattle",
+            "CalculationRecordingLoop"
+        ]
+    },
+    "CalculationRecordingFormationReadyCheck": {
+        "recognition": "OCR",
+        "expected": [
+            "快速编队",
+            "快速编",
+            "清空编队"
+        ],
+        "roi": [
+            1000,
+            15,
+            270,
+            90
+        ],
+        "action": "DoNothing",
+        "next": [
+            "CalculationRecordingFormationStartBattle",
+            "CalculationRecordingLoop"
+        ]
+    },
+    "CalculationRecordingFormationStartBattle": {
+        "recognition": "OCR",
+        "expected": [
+            "START BATTLE",
+            "开始作战",
+            "开始",
+            "作战"
+        ],
+        "roi": [
+            1100,
+            230,
+            180,
+            360
+        ],
+        "action": "Custom",
+        "custom_action": "guarded_click",
+        "post_delay": 1200,
+        "next": [
+            "CalculationRecordingLoop"
+        ]
+    },
+    "CalculationRecordingNeedsAdvance": {
+        "recognition": "Custom",
+        "custom_recognition": "calculation_recording_needs_advance",
+        "action": "Custom",
+        "custom_action": "calculation_recording_advance",
+        "post_delay": 700,
+        "next": [
+            "CalculationRecordingLoop"
+        ],
+        "on_error": [
+            "CalculationRecordingAllCompleteFinish"
+        ]
+    },
+    "CalculationRecordingAllCompleteFinish": {
+        "recognition": "DirectHit",
+        "action": "DoNothing",
+        "focus": {
+            "Node.Action.Succeeded": "【虚演刻录】所有符合条件的已解锁 Boss 均已推进完毕或跳过，任务完成。"
+        }
+    },
+    "CalculationRecordingEnterBattle": {
+        "recognition": "OCR",
+        "expected": [
+            "开始虚演刻录"
+        ],
+        "roi": [
+            745,
+            595,
+            400,
+            58
+        ],
+        "action": "Custom",
+        "custom_action": "calculation_recording_enter_battle",
+        "post_delay": 1200,
+        "next": [
+            "CalculationRecordingLoop"
+        ]
+    },
+    "CalculationRecordingHubEnter": {
+        "enabled": true,
+        "recognition": "Custom",
+        "custom_recognition": "calculation_recording_hub_enter",
+        "action": "Custom",
+        "custom_action": "guarded_click",
+        "post_delay": 1100,
+        "next": [
+            "CalculationRecordingLoop"
+        ]
+    },
+    "CalculationRecordingActivityHubSwitch": {
+        "enabled": true,
+        "recognition": "Custom",
+        "custom_recognition": "calculation_recording_activity_hub_need_switch",
+        "action": "Custom",
+        "custom_action": "calculation_recording_switch_to_tab",
+        "post_delay": 900,
+        "next": [
+            "CalculationRecordingLoop"
+        ]
+    },
+    "CalculationRecordingLobbyEnterActivity": {
+        "enabled": true,
+        "recognition": "OCR",
+        "expected": [
+            "整备列车",
+            "客运管理",
+            "START ENGINE",
+            "STARTENGINE"
+        ],
+        "roi": [
+            680,
+            580,
+            600,
+            140
+        ],
+        "action": "Custom",
+        "custom_action": "calculation_recording_open_activity_hub",
+        "post_delay": 900,
+        "next": [
+            "CalculationRecordingLoop"
+        ]
+    },
+    "CalculationRecordingComplete": {
+        "recognition": "DirectHit",
+        "action": "DoNothing",
+        "focus": {
+            "Node.Action.Succeeded": "【虚演刻录】虚演刻录自动推关任务已正常结束。"
+        }
+    }
+}

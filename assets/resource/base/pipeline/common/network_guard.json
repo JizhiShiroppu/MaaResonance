@@ -1,0 +1,42 @@
+{
+    "CommonNetworkPoorGuard": {
+        "enabled": false,
+        "recognition": "Custom",
+        "custom_recognition": "network_poor_popup_detect",
+        "action": "Custom",
+        "custom_action": "network_poor_popup_handle",
+        "post_delay": 300
+    },
+    "CommonNetworkGuardConfig": {
+        "action": "DoNothing",
+        "attach": {
+            "enabled": false,
+            "max_retries": 10,
+            "window_sec": 120.0,
+            "retry_wait_sec": 2.0,
+            "adb_auto_restart": true,
+            "pc_popup_alert": true,
+            "max_restarts": 2,
+            "restart_window_sec": 900.0
+        }
+    },
+    "CommonNetworkGuardOptRetryLimit": {
+        "action": "DoNothing",
+        "attach": {
+            "max_retries": 10,
+            "window_sec": 120.0
+        }
+    },
+    "CommonNetworkGuardOptAdbRestart": {
+        "action": "DoNothing",
+        "attach": {
+            "adb_auto_restart": true
+        }
+    },
+    "CommonNetworkGuardOptPcAlert": {
+        "action": "DoNothing",
+        "attach": {
+            "pc_popup_alert": true
+        }
+    }
+}
