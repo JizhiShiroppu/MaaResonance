@@ -146,11 +146,19 @@ jobs:
         id: release_notes
         shell: bash
         run: |
+          tag="${{ needs.meta.outputs.tag }}"
+          changelog_file="docs/zh_cn/changelog/${tag}.md"
           {
-            echo "release_body<<EOF"
-            cat docs/zh_cn/changelog/v2.0.0-beta.2.md
+            echo "release_body<<MAA_RELEASE_NOTES_EOF"
+            if [[ -f "$changelog_file" ]]; then
+              cat "$changelog_file"
+            else
+              echo "## ${tag}"
+              echo ""
+              echo "基于 [DaiMao204/MaaResonance](https://github.com/DaiMao204/MaaResonance) 的社区衍生增强版构建，详见仓库提交记录与 README。"
+            fi
             echo ""
-            echo "EOF"
+            echo "MAA_RELEASE_NOTES_EOF"
           } >> "$GITHUB_OUTPUT"
 
   release:
