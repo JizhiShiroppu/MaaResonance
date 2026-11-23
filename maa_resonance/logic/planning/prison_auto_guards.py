@@ -1042,6 +1042,9 @@ def plan_prisoner_worker_allocation(
     }
 
 
+_ASSIGNED_ROOM_BADGE_RE = re.compile(r"[仓合舍金室车厂]\s*[1-6](?!\d)")
+
+
 def find_idle_prisoner_card_points(
     grid_entries: Sequence[Mapping[str, Any]],
     *,
@@ -1050,6 +1053,28 @@ def find_idle_prisoner_card_points(
     """从「选择囚犯 / 快速编队」2×6 网格中挑选未忙碌且未选中的囚犯卡片中心坐标。"""
     if max_pick <= 0:
         return []
+    badged_slots: set[tuple[int, int]] = set()
+    for entry in grid_entries:
+        if not isinstance(entry, Mapping):
+            continue
+        raw_text = _clean_text(entry.get("text"))
+        box = _entry_box(entry)
+        if not raw_text or box is None:
+            continue
+        x, y, w, h = box
+        cx = x + w / 2.0
+        cy = y + h / 2.0
+        if cy < 80.0 or cy > 535.0 or cx < 20.0 or cx > 1265.0:
+            continue
+        row = 0 if cy < 305.0 else 1
+        col = min(5, max(0, int((cx - 20.0) // 208.0)))
+        dx = cx - (20.0 + col * 208.0)
+        # 卡片右下角所属房间角标区域（如 合1/金2 或被误识成单字符 '8'）
+        if w <= 56.0 and 148.0 <= dx <= 195.0 and (
+            (row == 0 and 226.0 <= cy <= 250.0) or (row == 1 and 450.0 <= cy <= 474.0)
+        ):
+            badged_slots.add((row, col))
+
     merged = _safe_merge(grid_entries, max_gap_x=10, max_row_diff=12.0)
     slot_texts: dict[tuple[int, int], list[str]] = {}
 
@@ -1066,15 +1091,19 @@ def find_idle_prisoner_card_points(
         slot_texts.setdefault((row, col), []).append(text)
 
     populated_hints = ("刑期", "%", "剪裁", "织造", "主管", "经理", "包工头", "0000")
-    busy_or_selected_hints = ("生产中", "忙碌", "工作中", "选中", "号工位")
+    busy_or_selected_hints = ("生产中", "产中", "忙碌", "工作中", "选中", "号工位", "工位", "车间", "原料")
 
     picked: list[tuple[int, int]] = []
     for row in (0, 1):
         for col in range(6):
+            if (row, col) in badged_slots:
+                continue
             joined = "".join(slot_texts.get((row, col), ()))
             if not joined:
                 continue
             if any(bad in joined for bad in busy_or_selected_hints):
+                continue
+            if _ASSIGNED_ROOM_BADGE_RE.search(joined) is not None:
                 continue
             if not any(ok in joined for ok in populated_hints):
                 continue
@@ -1143,3 +1172,12 @@ def has_unset_workshop_leader(top_entries: Sequence[Mapping[str, Any]]) -> bool:
     """判定生产车间顶栏「车间组长」是否仍显示「未设置」。"""
     joined = "".join(_clean_text(e.get("text")) for e in _safe_merge(top_entries, max_gap_x=10, max_row_diff=12.0))
     return "未设置" in joined
+
+
+def has_workshop_leader_set(top_entries: Sequence[Mapping[str, Any]]) -> bool:
+    """判定生产车间顶栏「车间组长」是否已设置有效组长（非「未设置」且含组长名称，避免漏识第二行时误判）。"""
+    joined = "".join(_clean_text(e.get("text")) for e in _safe_merge(top_entries, max_gap_x=10, max_row_diff=12.0))
+    if "组长" not in joined or "未设置" in joined:
+        return False
+    remainder = re.sub(r"[\s:：·\-_]+", "", joined.replace("车间组长", "").replace("组长", ""))
+    return bool(remainder) and remainder not in {"无", "空", "未"}

@@ -1540,6 +1540,7 @@ class PrisonLiveLogRegressionTests(unittest.TestCase):
             find_idle_prisoner_card_points,
             find_todo_claim_button_points,
             has_unset_workshop_leader,
+            has_workshop_leader_set,
             parse_exchange_shop_item_rows,
             parse_prisoner_checkin_counts,
             parse_raw_workshop_prod_status,
@@ -1633,6 +1634,43 @@ class PrisonLiveLogRegressionTests(unittest.TestCase):
 
         self.assertTrue(has_unset_workshop_leader([{"text": "车间组长 未设置"}]))
         self.assertFalse(has_unset_workshop_leader([{"text": "车间组长 鼹鼠"}]))
+        self.assertTrue(has_workshop_leader_set([{"text": "车间组长"}, {"text": "鼹鼠"}]))
+        self.assertFalse(has_workshop_leader_set([{"text": "车间组长"}, {"text": "未设置"}]))
+        self.assertFalse(has_workshop_leader_set([{"text": "车间组长"}]))
+        self.assertFalse(has_workshop_leader_set([]))
+
+        # 实机日志回归：截断的「产中」、合1/金1/合2/金2/仓1 角标以及右下角误识单字 '8' 均不得误选
+        picked_cross_ws = find_idle_prisoner_card_points(
+            [
+                # (0,0) 本车间已有工位
+                {"text": "4号工位", "box": [85, 226, 70, 22]},
+                {"text": "000011", "box": [170, 262, 42, 14]},
+                # (0,1) 已被 2 号车间占用 合2
+                {"text": "合2", "box": [170 + 208, 228, 30, 22]},
+                {"text": "刑期 7天 000008", "box": [240, 100, 120, 24]},
+                # (0,2) 已被 1 号车间占用 金1
+                {"text": "金1", "box": [170 + 416, 228, 30, 22]},
+                {"text": "刑期 6天 000004", "box": [450, 100, 120, 24]},
+                # (0,3) 真正空闲囚犯
+                {"text": "10% 刑期 6天", "box": [660, 110, 110, 24]},
+                {"text": "000001", "box": [800, 262, 42, 14]},
+                # (1,0) 实机右下角角标被误识成单字符 '8'
+                {"text": "消防斧暴徒", "box": [30, 476, 81, 26]},
+                {"text": "刑期", "box": [134, 317, 39, 20]},
+                {"text": "000011", "box": [170, 484, 42, 14]},
+                {"text": "8", "box": [172, 456, 14, 13]},
+                # (1,1) 原料车间被截断成「产中」
+                {"text": "12% 000009", "box": [240, 320, 90, 24]},
+                {"text": "产中", "box": [333, 417, 39, 15]},
+                # (1,2) 真正空闲囚犯
+                {"text": "6% 刑期 7天 剪裁", "box": [470, 400, 110, 30]},
+                # (1,3) 已被 1 号仓库占用 仓1
+                {"text": "刑期 5天", "box": [660, 320, 80, 24]},
+                {"text": "仓1", "box": [680, 445, 34, 20]},
+            ],
+            max_pick=6,
+        )
+        self.assertEqual(picked_cross_ws, [(742, 190), (534, 420)])
 
     def test_exec_upgrade_dynamically_unlocks_raw_and_orders_free_delete(self) -> None:
         from unittest import mock
@@ -1990,6 +2028,163 @@ class PrisonLiveLogRegressionTests(unittest.TestCase):
                 self.assertEqual(len(zips_after), 2)
                 self.assertIn("mock_ocr_crash", buf_err.getvalue())
                 self.assertIn("prison_issue_", buf_err.getvalue())
+
+    def test_workshop_skips_edit_when_leader_set_and_scans_slots_for_leader(self) -> None:
+        from unittest import mock
+        from maa_resonance.logic.planning import (
+            AccountSnapshot,
+            PrisonDiagnosticRecorder,
+            PrisonPlanOptions,
+            PrisonSnapshot,
+            WS_EDIT_MACHINE_SLOT_CENTERS,
+            WalletSnapshot,
+            build_prison_execution_plan,
+            plan_prison,
+        )
+
+        with _real_maa_agent_env() as ok_maa:
+            if not ok_maa:
+                self.skipTest("maafw is not installed")
+            import agent.prison_plan_action as ppa
+
+            frame = np.zeros((720, 1280, 3), dtype=np.uint8)
+            snap = AccountSnapshot(
+                uid="8820083699",
+                wallet=WalletSnapshot(coins=33_000_000, huashi=15_130),
+                prison=PrisonSnapshot(
+                    prison_level=7,
+                    work_tickets=2_600,
+                    prisoners_current=5,
+                    production_workshop_count=1,
+                    buildings={"research_center": 4, "power_center": 6},
+                ),
+            )
+            opts = PrisonPlanOptions(reserve_coins=30_000_000)
+            report = plan_prison(snap, opts)
+            plan = build_prison_execution_plan(snap, report, opts)
+
+            class _FakeCtx:
+                pass
+
+            # 1. 车间组长已设、本次未新入住、机台升级不触发 -> 跳过车间编辑，直接点「生产」
+            diag_skip = PrisonDiagnosticRecorder(export_mode="log_only", root_path=ROOT, raw_uid="8820083699")
+            state_skip = ppa._ExecState(
+                33_000_000,
+                2_600,
+                15_130,
+                30_000_000,
+                prisoners_checked_in=0,
+                diag=diag_skip,
+            )
+            taps_skip: list[str] = []
+
+            def fake_ocr_skip(_ctx, _img, name, _roi):
+                if "GridCur" in name:
+                    return [{"text": "1号生产车间", "box": [849, 223, 101, 23]}]
+                if "WsInterior" in name:
+                    return [
+                        {"text": "车间编辑", "box": [1100, 665, 80, 34]},
+                        {"text": "生产", "box": [1202, 665, 50, 34]},
+                    ]
+                if "WsLeaderTop" in name:
+                    return [{"text": "车间组长"}, {"text": "鼹鼠"}]
+                if "ProdSel_" in name:
+                    return [{"text": "一键取消", "box": [1137, 482, 94, 24]}]
+                if "ProdCards_" in name:
+                    return [{"text": "牛仔布织造法", "box": [193, 665, 99, 19]}]
+                if "ReadyPanel_" in name or "DurChk_8_" in name:
+                    return [{"text": "确定", "box": [1150, 660, 64, 28]}, {"text": "100/80", "box": [900, 580, 60, 22]}]
+                if "ProdAfterChk" in name:
+                    return []
+                if "BackTop" in name:
+                    return [{"text": "整顿中心 LV7"}]
+                if "BackDock" in name:
+                    return [{"text": "仓库"}, {"text": "订单站"}]
+                return []
+
+            with (
+                mock.patch.object(ppa, "is_stopping", return_value=False),
+                mock.patch.object(ppa, "safe_screencap", return_value=frame),
+                mock.patch.object(ppa, "sleep_with_stop", return_value=True),
+                mock.patch.object(ppa, "ocr_roi", side_effect=fake_ocr_skip),
+                mock.patch.object(ppa, "tap_point", side_effect=lambda _c, nm, _p: taps_skip.append(nm) or True),
+            ):
+                ppa._exec_start_workshop_production(_FakeCtx(), state_skip, snap, plan, "SkipEd_")
+
+            self.assertFalse(any("TapWsEdit" in t for t in taps_skip))
+            self.assertIn("SkipEd_TapProd_1号生产车间", taps_skip)
+            self.assertTrue(any(e["event"] == "ws_edit_skipped" for e in diag_skip.events))
+            self.assertEqual([e.target for e in state_skip.executed], ["牛仔布"])
+
+            # 2. 虽然组长已设，但本次有新入住囚犯 -> 仍需进入车间编辑并打开快速编队
+            state_ci = ppa._ExecState(33_000_000, 2_600, 15_130, 30_000_000, prisoners_checked_in=1)
+            taps_ci: list[str] = []
+
+            def fake_ocr_ci(_ctx, _img, name, _roi):
+                if "WsEditChk" in name:
+                    return [{"text": "快速编队", "box": [80, 480, 80, 28]}]
+                if "QtCnt" in name:
+                    return [{"text": "囚犯 5/6", "box": [40, 660, 80, 26]}]
+                if "QtGrid" in name:
+                    return []
+                if "WsEditLeaderChk" in name:
+                    return [{"text": "车间组长"}, {"text": "鼹鼠"}]
+                return fake_ocr_skip(_ctx, _img, name, _roi)
+
+            with (
+                mock.patch.object(ppa, "is_stopping", return_value=False),
+                mock.patch.object(ppa, "safe_screencap", return_value=frame),
+                mock.patch.object(ppa, "sleep_with_stop", return_value=True),
+                mock.patch.object(ppa, "ocr_roi", side_effect=fake_ocr_ci),
+                mock.patch.object(ppa, "tap_point", side_effect=lambda _c, nm, _p: taps_ci.append(nm) or True),
+            ):
+                ppa._exec_start_workshop_production(_FakeCtx(), state_ci, snap, plan, "NewCi_")
+
+            self.assertIn("NewCi_TapWsEdit_1号生产车间", taps_ci)
+            self.assertIn("NewCi_TapQuickTeam_1号生产车间", taps_ci)
+
+            # 3. 组长未设置且 1~3 号槽无组员，仅 4 号槽有组员 -> 顺序探测到槽 3 并点击「设为组长」+ 应用
+            state_ld = ppa._ExecState(33_000_000, 2_600, 15_130, 30_000_000, prisoners_checked_in=0)
+            taps_ld: list[tuple[str, tuple[int, int]]] = []
+
+            def fake_ocr_ld(_ctx, _img, name, _roi):
+                if "WsLeaderTop" in name or "WsEditLeaderChk" in name:
+                    return [{"text": "车间组长"}, {"text": "未设置"}]
+                if "WsEditChk" in name:
+                    return [{"text": "快速编队", "box": [80, 480, 80, 28]}]
+                if "QtCnt" in name:
+                    return [{"text": "囚犯 1/6", "box": [40, 660, 80, 26]}]
+                if "QtGrid" in name:
+                    return []
+                if "WsSetLeaderBtn_1号生产车间_3" in name:
+                    return [{"text": "设为组长", "box": [635, 642, 80, 28]}]
+                if "WsSetLeaderBtn_" in name:
+                    return []
+                return fake_ocr_skip(_ctx, _img, name, _roi)
+
+            with (
+                mock.patch.object(ppa, "is_stopping", return_value=False),
+                mock.patch.object(ppa, "safe_screencap", return_value=frame),
+                mock.patch.object(ppa, "sleep_with_stop", return_value=True),
+                mock.patch.object(ppa, "ocr_roi", side_effect=fake_ocr_ld),
+                mock.patch.object(ppa, "tap_point", side_effect=lambda _c, nm, pt: taps_ld.append((nm, (int(pt[0]), int(pt[1])))) or True),
+            ):
+                ppa._exec_start_workshop_production(_FakeCtx(), state_ld, snap, plan, "LdScan_")
+
+            slot_taps = [n for n, _ in taps_ld if "Leader_" in n and "WsSlot" in n]
+            self.assertEqual(
+                slot_taps,
+                [
+                    "LdScan_WsSlot0Leader_1号生产车间",
+                    "LdScan_WsSlot1Leader_1号生产车间",
+                    "LdScan_WsSlot2Leader_1号生产车间",
+                    "LdScan_WsSlot3Leader_1号生产车间",
+                ],
+            )
+            self.assertIn(("LdScan_WsSlot3Leader_1号生产车间", WS_EDIT_MACHINE_SLOT_CENTERS[3]), taps_ld)
+            self.assertTrue(any(n == "LdScan_WsSetLeader_1号生产车间" for n, _ in taps_ld))
+            self.assertTrue(any(n == "LdScan_WsEditApply_1号生产车间" for n, _ in taps_ld))
+            self.assertTrue(any(e.action_type == "ws_set_leader" for e in state_ld.executed))
 
 
 if __name__ == "__main__":

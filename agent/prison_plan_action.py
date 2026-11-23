@@ -154,6 +154,7 @@ from maa_resonance.logic.planning import (
     format_prison_plan_markdown,
     has_unset_workshop_leader,
     has_warehouse_left_coin_price,
+    has_workshop_leader_set,
     is_exchange_shop_entries,
     is_orders_foyer_entries,
     is_orders_screen_entries,
@@ -2590,7 +2591,16 @@ def _exec_start_workshop_production(
 
         leader_top_entries = ocr_roi(context, room_img, f"{prefix}WsLeaderTop_{ws_label}", WS_EDIT_LEADER_TOP_ROI)
         leader_unset = has_unset_workshop_leader(leader_top_entries)
-        if detected_edit_pt and ((allow_edit_team and (leader_unset or total_prisoners > 0)) or allow_machine_up):
+        leader_set = has_workshop_leader_set(leader_top_entries)
+        need_team_edit = allow_edit_team and (
+            leader_unset
+            or state.prisoners_checked_in > 0
+            or (not leader_set and total_prisoners > 0)
+        )
+        if allow_edit_team and leader_set and not need_team_edit and not allow_machine_up:
+            if state.diag is not None:
+                state.diag.record("exec", "ws_edit_skipped", f"{ws_label}: 已有工位且组长已设，跳过车间编辑")
+        if detected_edit_pt and (need_team_edit or allow_machine_up):
             if tap_point(context, f"{prefix}TapWsEdit_{ws_label}", detected_edit_pt[0]):
                 def _check_ws_edit(frame: Any, poll_idx: int) -> bool | None:
                     e_entries = ocr_roi(context, frame, f"{prefix}WsEditChk_{ws_label}_{poll_idx}", WS_EDIT_PANEL_CHECK_ROI)
@@ -2612,7 +2622,7 @@ def _exec_start_workshop_production(
                     break
                 if edit_ok and edit_img is not None:
                     edited_anything = False
-                    if allow_edit_team and total_prisoners > 0 and tap_point(context, f"{prefix}TapQuickTeam_{ws_label}", WS_EDIT_QUICK_TEAM_POINT):
+                    if need_team_edit and total_prisoners > 0 and tap_point(context, f"{prefix}TapQuickTeam_{ws_label}", WS_EDIT_QUICK_TEAM_POINT):
                         def _check_qt(frame: Any, poll_idx: int) -> list[dict[str, Any]] | None:
                             c_entries = ocr_roi(context, frame, f"{prefix}QtCnt_{ws_label}_{poll_idx}", RAW_PROD_PICKER_COUNT_ROI)
                             if any(kw in "".join(_clean_text(e.get("text")) for e in c_entries if isinstance(e, dict)) for kw in ("囚犯", "/")):
@@ -2664,19 +2674,27 @@ def _exec_start_workshop_production(
                     if allow_edit_team and edit_img is not None and has_unset_workshop_leader(
                         ocr_roi(context, edit_img, f"{prefix}WsEditLeaderChk_{ws_label}", WS_EDIT_LEADER_TOP_ROI)
                     ):
-                        if tap_point(context, f"{prefix}WsSlot0Leader_{ws_label}", WS_EDIT_MACHINE_SLOT_CENTERS[0]) and sleep_with_stop(context, 0.55):
-                            s0_img = safe_screencap(context)
-                            if s0_img is not None:
-                                sl_entries = ocr_roi(context, s0_img, f"{prefix}WsSetLeaderBtn_{ws_label}", WS_EDIT_SET_LEADER_ROI)
-                                sl_pt: tuple[int, int] | None = None
-                                for entry in _merge_horizontal_adjacent(sl_entries, max_gap_x=12, max_row_diff=12.0):
-                                    if "设为组长" in _clean_text(entry.get("text")):
-                                        sl_pt = _entry_center(entry) or WS_EDIT_SET_LEADER_POINT
-                                        break
-                                if sl_pt is not None and tap_point(context, f"{prefix}WsSetLeader_{ws_label}", sl_pt):
-                                    sleep_with_stop(context, 0.85)
-                                    edited_anything = True
-                                    state.add_executed("do", "ws_set_leader", ws_label, f"为「{ws_label}」指派车间组长")
+                        for slot_idx, slot_pt in enumerate(WS_EDIT_MACHINE_SLOT_CENTERS):
+                            if is_stopping(context):
+                                break
+                            if not tap_point(context, f"{prefix}WsSlot{slot_idx}Leader_{ws_label}", slot_pt):
+                                break
+                            if not sleep_with_stop(context, 0.55):
+                                break
+                            slot_img = safe_screencap(context)
+                            if slot_img is None:
+                                continue
+                            sl_entries = ocr_roi(context, slot_img, f"{prefix}WsSetLeaderBtn_{ws_label}_{slot_idx}", WS_EDIT_SET_LEADER_ROI)
+                            sl_pt: tuple[int, int] | None = None
+                            for entry in _merge_horizontal_adjacent(sl_entries, max_gap_x=12, max_row_diff=12.0):
+                                if "设为组长" in _clean_text(entry.get("text")):
+                                    sl_pt = _entry_center(entry) or WS_EDIT_SET_LEADER_POINT
+                                    break
+                            if sl_pt is not None and tap_point(context, f"{prefix}WsSetLeader_{ws_label}", sl_pt):
+                                sleep_with_stop(context, 0.85)
+                                edited_anything = True
+                                state.add_executed("do", "ws_set_leader", ws_label, f"为「{ws_label}」指派车间组长")
+                                break
 
                     if allow_machine_up and not is_stopping(context):
                         machine_ups = 0
