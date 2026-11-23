@@ -54,6 +54,7 @@ class PcTradeInterfaceTest(unittest.TestCase):
             "RegionalCombat",
             "CalculationRecording",
             "DailyRoutine",
+            "PrisonPlanScan",
             "MainlineAdvance",
             "AutoBattle",
             "AutoTeamFormation",
@@ -101,10 +102,15 @@ class PcTradeInterfaceTest(unittest.TestCase):
                 ("SecurityAgency", False),
                 ("RegionalCombat", False),
                 ("CalculationRecording", False),
+                ("PrisonPlanScan", False),
                 ("AutoTwoCityBusiness", False),
                 ("DailyClaim", True),
             ],
         )
+        prison_daily = next(t for t in all_in_one["task"] if t["name"] == "PrisonPlanScan")
+        self.assertEqual(prison_daily["option"]["PrisonPlanExecMode"], "ExecuteSafeAuto")
+        self.assertEqual(prison_daily["option"]["PrisonPlanAutoOpenReport"], "No")
+        self.assertEqual(prison_daily["option"]["PrisonPlanDebugExport"], "LogAndBundle")
 
     def test_android_lifecycle_actions_are_overridden_only_on_pc(self):
         interface = read_json(ASSETS / "interface.json")

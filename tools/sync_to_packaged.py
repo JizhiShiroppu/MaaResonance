@@ -48,6 +48,13 @@ def sync_to_packaged(target_root: Path = DEFAULT_TARGET_ROOT) -> None:
     copied = 0
     copied += _copy_tree_files(REPO_ROOT / "maa_resonance", target_root / "maa_resonance", suffixes=(".py",))
     copied += _copy_tree_files(REPO_ROOT / "agent", target_root / "agent", suffixes=(".py",))
+    src_resources = REPO_ROOT / "resources"
+    if src_resources.exists():
+        copied += _copy_tree_files(
+            src_resources,
+            target_root / "resources",
+            suffixes=(".json",),
+        )
     copied += _copy_tree_files(
         REPO_ROOT / "assets" / "resource" / "tasks",
         target_root / "resource" / "tasks",

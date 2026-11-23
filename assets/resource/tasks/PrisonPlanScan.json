@@ -1,0 +1,793 @@
+{
+    "task": [
+        {
+            "name": "PrisonPlanScan",
+            "label": "整顿中心（监狱）自动（实验型）",
+            "entry": "PrisonPlanStart",
+            "description": "整顿中心（监狱）专属自动管家（支持在任意城市通过左侧抽屉远程进入，也可接入一键自动日常）：先扫描整顿等级、建筑、双仓、商店工票与黑月订单，再按执行模式与 14 项细粒度模块开关安全处理「做什么 / 买什么 / 造什么」。全程受零桦石像素+OCR双护栏、可自定义铁盟币底线与 1/6/16/26/36/46 阶梯锁保护，并自动导出脱敏排错压缩包至 config/planning/logs/ 方便提交 Issue。",
+            "group": [
+                "daily",
+                "account"
+            ],
+            "resource": [
+                "official"
+            ],
+            "controller": [
+                "ADB",
+                "Win32",
+                "Win32BackgroundWindowPos",
+                "Win32BackgroundCursorPos"
+            ],
+            "option": [
+                "PrisonPlanExecMode",
+                "PrisonPlanReserveCoins",
+                "PrisonPlanPlayerLevel",
+                "PrisonPlanScanSubpages",
+                "PrisonPlanHuashiStrategy",
+                "PrisonPlanAutoOpenReport",
+                "PrisonPlanDebugExport"
+            ]
+        }
+    ],
+    "option": {
+        "PrisonPlanExecMode": {
+            "type": "select",
+            "label": "执行模式",
+            "description": "默认在像素与金额双护栏下自动执行安全的黑月交单、研发/电力升级、左侧铁盟币扩仓、工票配方、原料预存与车间排产；可随时切回「仅只读扫描与规划」（切换后自动折叠下方执行细节项）。自动执行全程绝对不花桦石。",
+            "default_case": "ExecuteSafeAuto",
+            "cases": [
+                {
+                    "name": "ExecuteSafeAuto",
+                    "label": "自动执行安全项（零桦石/保底线/阶梯护栏，推荐）",
+                    "option": [
+                        "PrisonPlanAutoScope",
+                        "PrisonPlanProdDuration",
+                        "PrisonPlanRawWorkerMode",
+                        "PrisonPlanWarehouseBatchCap",
+                        "PrisonPlanCoreUpgradeCap"
+                    ],
+                    "pipeline_override": {
+                        "PrisonPlanOptExecMode": {
+                            "attach": {
+                                "exec_mode": "execute_safe_auto"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "PlanOnly",
+                    "label": "仅只读扫描与规划（零点击消费）",
+                    "pipeline_override": {
+                        "PrisonPlanOptExecMode": {
+                            "attach": {
+                                "exec_mode": "plan_only"
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "PrisonPlanAutoScope": {
+            "type": "select",
+            "label": "自动执行范围",
+            "description": "当执行模式为「自动执行安全项」时生效；选择「自定义勾选子模块」可单独开关 14 项具体自动化动作。",
+            "default_case": "FullSafe",
+            "cases": [
+                {
+                    "name": "FullSafe",
+                    "label": "全项安全托管（交单 + 升级 + 扩仓 + 配方 + 预存 + 排产）",
+                    "pipeline_override": {
+                        "PrisonPlanOptAutoScope": {
+                            "attach": {
+                                "auto_scope": "full_safe",
+                                "modules_ui_configured": false
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "OrdersAndProdOnly",
+                    "label": "仅做：领奖 + 入住 + 财务 + 交单 + 原料与车间排产",
+                    "pipeline_override": {
+                        "PrisonPlanOptAutoScope": {
+                            "attach": {
+                                "auto_scope": "orders_and_prod",
+                                "modules_ui_configured": false
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "BuildAndBuyOnly",
+                    "label": "仅建买：核心升级 + 左侧币扩仓 + 商店工票兑换",
+                    "pipeline_override": {
+                        "PrisonPlanOptAutoScope": {
+                            "attach": {
+                                "auto_scope": "build_and_buy",
+                                "modules_ui_configured": false
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Custom",
+                    "label": "自定义勾选子模块（展开下方 14 项精细开关）",
+                    "option": [
+                        "PrisonPlanEnabledModules"
+                    ],
+                    "pipeline_override": {
+                        "PrisonPlanOptAutoScope": {
+                            "attach": {
+                                "auto_scope": "custom",
+                                "modules_ui_configured": true
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "PrisonPlanEnabledModules": {
+            "type": "checkbox",
+            "label": "精细子模块启用清单（仅自定义范围时生效）",
+            "description": "全部动作仍受零桦石、保留底线与 1/6/16/26/36/46 阶梯锁保护；只勾选你想交由脚本自动点击的部分即可。",
+            "default_case": [
+                "mod_todo_claim",
+                "mod_prisoner_checkin",
+                "mod_finance_auto_refill",
+                "mod_order_deliver",
+                "mod_order_delete_free",
+                "mod_building_upgrade",
+                "mod_warehouse_coin_expand",
+                "mod_shop_recipes",
+                "mod_shop_items",
+                "mod_raw_predeposit",
+                "mod_raw_start",
+                "mod_ws_edit_team",
+                "mod_ws_machine_upgrade",
+                "mod_ws_start_prod"
+            ],
+            "cases": [
+                {
+                    "name": "mod_todo_claim",
+                    "label": "事项一览自动领奖",
+                    "pipeline_override": {
+                        "PrisonPlanOptEnabledModules": {
+                            "attach": {
+                                "mod_pick_todo_claim": true
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "mod_prisoner_checkin",
+                    "label": "名册未整顿囚犯办理入住",
+                    "pipeline_override": {
+                        "PrisonPlanOptEnabledModules": {
+                            "attach": {
+                                "mod_pick_prisoner_checkin": true
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "mod_finance_auto_refill",
+                    "label": "财务中心保证金 80% 自动补满",
+                    "pipeline_override": {
+                        "PrisonPlanOptEnabledModules": {
+                            "attach": {
+                                "mod_pick_finance_auto_refill": true
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "mod_order_deliver",
+                    "label": "黑月运输订单自动交付",
+                    "pipeline_override": {
+                        "PrisonPlanOptEnabledModules": {
+                            "attach": {
+                                "mod_pick_order_deliver": true
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "mod_order_delete_free",
+                    "label": "黑月低效订单免费删除（有确认框自动退回）",
+                    "pipeline_override": {
+                        "PrisonPlanOptEnabledModules": {
+                            "attach": {
+                                "mod_pick_order_delete_free": true
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "mod_building_upgrade",
+                    "label": "核心与合规建筑自动升级 / 解锁",
+                    "pipeline_override": {
+                        "PrisonPlanOptEnabledModules": {
+                            "attach": {
+                                "mod_pick_building_upgrade": true
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "mod_warehouse_coin_expand",
+                    "label": "双仓左侧铁盟币扩容（像素护栏锁死右页签）",
+                    "pipeline_override": {
+                        "PrisonPlanOptEnabledModules": {
+                            "attach": {
+                                "mod_pick_warehouse_coin_expand": true
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "mod_shop_recipes",
+                    "label": "兑换商店冲级研发配方兑换",
+                    "pipeline_override": {
+                        "PrisonPlanOptEnabledModules": {
+                            "attach": {
+                                "mod_pick_shop_recipes": true
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "mod_shop_items",
+                    "label": "兑换商店拉普拉斯协议 / 自观测胶卷兑换",
+                    "pipeline_override": {
+                        "PrisonPlanOptEnabledModules": {
+                            "attach": {
+                                "mod_pick_shop_items": true
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "mod_raw_predeposit",
+                    "label": "原料车间铁盟币预存",
+                    "pipeline_override": {
+                        "PrisonPlanOptEnabledModules": {
+                            "attach": {
+                                "mod_pick_raw_predeposit": true
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "mod_raw_start",
+                    "label": "原料车间配员与启动采集",
+                    "pipeline_override": {
+                        "PrisonPlanOptEnabledModules": {
+                            "attach": {
+                                "mod_pick_raw_start": true
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "mod_ws_edit_team",
+                    "label": "生产车间快速编队与自动设组长",
+                    "pipeline_override": {
+                        "PrisonPlanOptEnabledModules": {
+                            "attach": {
+                                "mod_pick_ws_edit_team": true
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "mod_ws_machine_upgrade",
+                    "label": "生产车间 LV6 缝纫机升级（禁桦石）",
+                    "pipeline_override": {
+                        "PrisonPlanOptEnabledModules": {
+                            "attach": {
+                                "mod_pick_ws_machine_upgrade": true
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "mod_ws_start_prod",
+                    "label": "生产车间高优白名单启动排产",
+                    "pipeline_override": {
+                        "PrisonPlanOptEnabledModules": {
+                            "attach": {
+                                "mod_pick_ws_start_prod": true
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "PrisonPlanProdDuration": {
+            "type": "select",
+            "label": "生产车间排产时长偏好",
+            "description": "启动生产车间白名单配方时，优先尝试的挂机时长档位；若当前材料不够该档，会自动向下回退（如 8小时 -> 4小时 -> 2小时）。",
+            "default_case": "Prefer8h",
+            "cases": [
+                {
+                    "name": "Prefer8h",
+                    "label": "8 小时优先（适合日常长挂机，不够自动降档，推荐）",
+                    "pipeline_override": {
+                        "PrisonPlanOptProdDuration": {
+                            "attach": {
+                                "prod_duration_pref": "8h"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Prefer4h",
+                    "label": "4 小时优先（兼顾周转与刷新节奏）",
+                    "pipeline_override": {
+                        "PrisonPlanOptProdDuration": {
+                            "attach": {
+                                "prod_duration_pref": "4h"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Prefer2h",
+                    "label": "2 小时短单（适合手动高频收菜与冲黑月急单）",
+                    "pipeline_override": {
+                        "PrisonPlanOptProdDuration": {
+                            "attach": {
+                                "prod_duration_pref": "2h"
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "PrisonPlanRawWorkerMode": {
+            "type": "select",
+            "label": "原料车间囚犯配员策略",
+            "description": "控制原料采集车间与生产制造车间之间的在监囚犯人数分配策略。",
+            "default_case": "Balanced",
+            "cases": [
+                {
+                    "name": "Balanced",
+                    "label": "均衡自动（按原料仓余量动态预留生产人手，推荐）",
+                    "pipeline_override": {
+                        "PrisonPlanOptRawWorkerMode": {
+                            "attach": {
+                                "raw_worker_mode": "balanced"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "RawPriority",
+                    "label": "优先填满原料车间（原料严重短缺时加快采集）",
+                    "pipeline_override": {
+                        "PrisonPlanOptRawWorkerMode": {
+                            "attach": {
+                                "raw_worker_mode": "raw_priority"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "PredepositOnly",
+                    "label": "仅预存铁盟币（不改动原料车间人员与启动采集）",
+                    "pipeline_override": {
+                        "PrisonPlanOptRawWorkerMode": {
+                            "attach": {
+                                "raw_worker_mode": "predeposit_only"
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "PrisonPlanWarehouseBatchCap": {
+            "type": "select",
+            "label": "单次仓库铁盟币扩容上限",
+            "description": "控制单次运行最多为原料仓/成品仓各连续购买多少批左侧铁盟币扩容（每批最多 10 次，即 10 万币）。",
+            "default_case": "Batches2",
+            "cases": [
+                {
+                    "name": "Batches1",
+                    "label": "保守：每仓每趟最多 1 批（≤10 次）",
+                    "pipeline_override": {
+                        "PrisonPlanOptWarehouseBatchCap": {
+                            "attach": {
+                                "warehouse_batch_cap": 1
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Batches2",
+                    "label": "稳健：每仓每趟最多 2 批（≤20 次，推荐）",
+                    "pipeline_override": {
+                        "PrisonPlanOptWarehouseBatchCap": {
+                            "attach": {
+                                "warehouse_batch_cap": 2
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Batches3",
+                    "label": "积极：每仓每趟最多 3 批（≤30 次）",
+                    "pipeline_override": {
+                        "PrisonPlanOptWarehouseBatchCap": {
+                            "attach": {
+                                "warehouse_batch_cap": 3
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Batches5",
+                    "label": "快速点满：每仓每趟最多 5 批（≤50 次）",
+                    "pipeline_override": {
+                        "PrisonPlanOptWarehouseBatchCap": {
+                            "attach": {
+                                "warehouse_batch_cap": 5
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "PrisonPlanCoreUpgradeCap": {
+            "type": "select",
+            "label": "单栋建筑单趟连升上限",
+            "description": "控制每栋建筑单次运行最多连续点击升级多少级，防止单趟耗时过长或消耗过多工票。",
+            "default_case": "Cap3",
+            "cases": [
+                {
+                    "name": "Cap1",
+                    "label": "每栋最多升 1 级",
+                    "pipeline_override": {
+                        "PrisonPlanOptCoreUpgradeCap": {
+                            "attach": {
+                                "core_upgrade_cap": 1
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Cap3",
+                    "label": "每栋最多连升 3 级（推荐）",
+                    "pipeline_override": {
+                        "PrisonPlanOptCoreUpgradeCap": {
+                            "attach": {
+                                "core_upgrade_cap": 3
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Cap5",
+                    "label": "每栋最多连升 5 级",
+                    "pipeline_override": {
+                        "PrisonPlanOptCoreUpgradeCap": {
+                            "attach": {
+                                "core_upgrade_cap": 5
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "PrisonPlanReserveCoins": {
+            "type": "select",
+            "label": "铁盟币安全保留底线",
+            "description": "账面资金低于此底线时停止消耗铁盟币的基建、扩仓与原料预存，避免影响跑商本金与日常周转；可选择自定义精确数额。",
+            "default_case": "Reserve15M",
+            "cases": [
+                {
+                    "name": "Reserve0",
+                    "label": "0 币（不设防线，小号/专心清库存冲级用）",
+                    "pipeline_override": {
+                        "PrisonPlanOptReserveCoins": {
+                            "attach": {
+                                "reserve_coins": 0,
+                                "use_custom_reserve_coins": false
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Reserve5M",
+                    "label": "保留 500 万（激进投入）",
+                    "pipeline_override": {
+                        "PrisonPlanOptReserveCoins": {
+                            "attach": {
+                                "reserve_coins": 5000000,
+                                "use_custom_reserve_coins": false
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Reserve10M",
+                    "label": "保留 1000 万（轻度周转）",
+                    "pipeline_override": {
+                        "PrisonPlanOptReserveCoins": {
+                            "attach": {
+                                "reserve_coins": 10000000,
+                                "use_custom_reserve_coins": false
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Reserve15M",
+                    "label": "保留 1500 万（推荐）",
+                    "pipeline_override": {
+                        "PrisonPlanOptReserveCoins": {
+                            "attach": {
+                                "reserve_coins": 15000000,
+                                "use_custom_reserve_coins": false
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Reserve30M",
+                    "label": "保留 3000 万（稳健周转）",
+                    "pipeline_override": {
+                        "PrisonPlanOptReserveCoins": {
+                            "attach": {
+                                "reserve_coins": 30000000,
+                                "use_custom_reserve_coins": false
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Reserve50M",
+                    "label": "保留 5000 万（保守攒钱）",
+                    "pipeline_override": {
+                        "PrisonPlanOptReserveCoins": {
+                            "attach": {
+                                "reserve_coins": 50000000,
+                                "use_custom_reserve_coins": false
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Reserve100M",
+                    "label": "保留 1 亿（超大户仅花溢余）",
+                    "pipeline_override": {
+                        "PrisonPlanOptReserveCoins": {
+                            "attach": {
+                                "reserve_coins": 100000000,
+                                "use_custom_reserve_coins": false
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Custom",
+                    "label": "自定义保留底线金额",
+                    "option": [
+                        "PrisonPlanCustomReserveCoins"
+                    ],
+                    "pipeline_override": {
+                        "PrisonPlanOptReserveCoins": {
+                            "attach": {
+                                "reserve_coins": 15000000,
+                                "use_custom_reserve_coins": true
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "PrisonPlanCustomReserveCoins": {
+            "type": "input",
+            "label": "自定义铁盟币保留底线（整数）",
+            "description": "输入非负整数金额（例如 20000000 表示保留 2000 万铁盟币）。",
+            "inputs": [
+                {
+                    "name": "custom_reserve_coins",
+                    "label": "保留下限",
+                    "default": "20000000",
+                    "pipeline_type": "int",
+                    "verify": "^(0|[1-9]\\d*)$",
+                    "pattern_msg": "请输入大于等于 0 的非负整数。"
+                }
+            ],
+            "pipeline_override": {
+                "PrisonPlanOptCustomReserveCoins": {
+                    "attach": {
+                        "custom_reserve_coins": "{custom_reserve_coins}"
+                    }
+                }
+            }
+        },
+        "PrisonPlanScanSubpages": {
+            "type": "switch",
+            "label": "顺便只读查看「仓库」「商店」与「黑月订单」",
+            "description": "开启后会先只读扫一遍仓库、兑换商店和订单页（只读绝不乱花钱），用于生成精确建议并跳过后续无效二次进店。",
+            "default_case": "Yes",
+            "cases": [
+                {
+                    "name": "Yes",
+                    "pipeline_override": {
+                        "PrisonPlanOptScanSubpages": {
+                            "attach": {
+                                "scan_subpages": true
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "No",
+                    "pipeline_override": {
+                        "PrisonPlanOptScanSubpages": {
+                            "attach": {
+                                "scan_subpages": false
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "PrisonPlanHuashiStrategy": {
+            "type": "select",
+            "label": "桦石消费策略（仅作规划参考，自动执行永不花桦石）",
+            "description": "二周年攻略建议电机与仓库桦石扩容全点满（满电机共 3,500 桦石）；无论选哪项，当前自动执行模式均会通过像素+OCR双重护栏硬锁电机页与仓库桦石页签，绝不消耗桦石。",
+            "default_case": "ProtectAll",
+            "cases": [
+                {
+                    "name": "ProtectAll",
+                    "label": "全程保护桦石（默认推荐）",
+                    "pipeline_override": {
+                        "PrisonPlanOptHuashiStrategy": {
+                            "attach": {
+                                "allow_huashi_motors": false,
+                                "allow_huashi_warehouse": false
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "MotorsOnly",
+                    "label": "仅允许计划电力中心电机桦石",
+                    "pipeline_override": {
+                        "PrisonPlanOptHuashiStrategy": {
+                            "attach": {
+                                "allow_huashi_motors": true,
+                                "allow_huashi_warehouse": false
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "MotorsAndWarehouse",
+                    "label": "按攻略全开计划（电机 + 仓库桦石扩容）",
+                    "pipeline_override": {
+                        "PrisonPlanOptHuashiStrategy": {
+                            "attach": {
+                                "allow_huashi_motors": true,
+                                "allow_huashi_warehouse": true
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "PrisonPlanPlayerLevel": {
+            "type": "select",
+            "label": "列车长等级档位（影响原料车间预存金额）",
+            "description": "按二周年攻略建议：80 级前原料采集每次预存 50 万铁盟币，80 级及以后可按 250 万预存。",
+            "default_case": "Under80",
+            "cases": [
+                {
+                    "name": "Under80",
+                    "label": "80 级以下（原料车间每次预存 50 万）",
+                    "pipeline_override": {
+                        "PrisonPlanOptPlayerLevel": {
+                            "attach": {
+                                "player_level": 71
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Over80",
+                    "label": "80 级及以上（原料车间每次预存 250 万）",
+                    "pipeline_override": {
+                        "PrisonPlanOptPlayerLevel": {
+                            "attach": {
+                                "player_level": 80
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "PrisonPlanAutoOpenReport": {
+            "type": "switch",
+            "label": "分析完成后自动在浏览器打开可视化报告",
+            "description": "开启后会在分析结束时自动用默认浏览器打开离线 HTML 图表报告（全程不联网）；在每日一键日常队列中默认关闭以防打断挂机。",
+            "default_case": "Yes",
+            "cases": [
+                {
+                    "name": "Yes",
+                    "pipeline_override": {
+                        "PrisonPlanOptAutoOpenReport": {
+                            "attach": {
+                                "auto_open_report": true
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "No",
+                    "pipeline_override": {
+                        "PrisonPlanOptAutoOpenReport": {
+                            "attach": {
+                                "auto_open_report": false
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "PrisonPlanDebugExport": {
+            "type": "select",
+            "label": "专项排错日志与 Issue 压缩包导出",
+            "description": "遇到多账号/不同分辨率异常或点偏问题时，自动将脱敏后的专项日志、JSON 状态与 Issue 模版打包到 config/planning/logs/（自动清理只留最近 10 份）；遇到护栏拦截或异常时还可选自动附带紧凑 PNG 现场截图。",
+            "default_case": "LogAndBundle",
+            "cases": [
+                {
+                    "name": "LogAndBundle",
+                    "label": "开启专项日志 + 一键 Issue 压缩包（默认推荐，已脱敏）",
+                    "pipeline_override": {
+                        "PrisonPlanOptDebugExport": {
+                            "attach": {
+                                "diag_export_mode": "bundle"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "BundleWithScreenshots",
+                    "label": "开启压缩包并附带异常 / 拦截现场截图（排错最清晰）",
+                    "pipeline_override": {
+                        "PrisonPlanOptDebugExport": {
+                            "attach": {
+                                "diag_export_mode": "bundle_screenshots"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "LogOnly",
+                    "label": "仅导出纯文本专项日志（.log）",
+                    "pipeline_override": {
+                        "PrisonPlanOptDebugExport": {
+                            "attach": {
+                                "diag_export_mode": "log_only"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Off",
+                    "label": "关闭专项诊断导出",
+                    "pipeline_override": {
+                        "PrisonPlanOptDebugExport": {
+                            "attach": {
+                                "diag_export_mode": "off"
+                            }
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}

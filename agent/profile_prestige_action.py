@@ -1600,6 +1600,20 @@ def _compact_account_profile(result: dict[str, Any], *, uid: str) -> dict[str, A
     return payload
 
 
+_MANAGED_ACCOUNT_TOP_KEYS = frozenset(
+    {
+        "version",
+        "uid",
+        "updated_at",
+        "completed_parts",
+        "trade",
+        "planner",
+        "account_profile_read",
+        "_source",
+    }
+)
+
+
 def _save_unified_account_profile(partial_result: dict[str, Any], *, task_entry: str) -> str:
     uid = _safe_account_uid(partial_result.get("uid") or _PROFILE_UID)
     previous_config = _load_account_config(uid)
@@ -1611,6 +1625,10 @@ def _save_unified_account_profile(partial_result: dict[str, Any], *, task_entry:
     payload["_source"] = {
         "last_task_entry": task_entry,
     }
+    if isinstance(previous_config, dict):
+        for key, value in previous_config.items():
+            if key not in _MANAGED_ACCOUNT_TOP_KEYS and key not in payload:
+                payload[key] = copy.deepcopy(value)
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(payload, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
     return str(path)

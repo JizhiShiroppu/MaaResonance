@@ -31,6 +31,7 @@ import event_story_daily_action
 import guarded_click_action
 import mainline_quest_action
 import network_guard_action
+import prison_plan_action
 import profile_prestige_action
 import regional_combat_action
 import security_agency_action

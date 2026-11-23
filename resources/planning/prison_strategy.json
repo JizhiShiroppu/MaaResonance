@@ -1,0 +1,493 @@
+{
+  "meta": {
+    "version": 1,
+    "updated_at": "2026-11-23",
+    "sources": [
+      "bwiki_2025_03",
+      "live_mumu_lv2_lv7_2026_11_23",
+      "video_2nd_anniversary_guide"
+    ]
+  },
+  "thresholds": {
+    "graduation_prison_level": 60,
+    "estimated_full_graduation_coins": 550000000,
+    "default_reserve_coins": 15000000,
+    "recommended_prerequisite_cities": [
+      "云岫桥基地",
+      "海角城",
+      "岚心城"
+    ],
+    "recommended_transfer_anchors": [
+      "海角城",
+      "岚心城"
+    ],
+    "transfer_center_unlock_level": 9,
+    "weekly_order_unlock_level": 20,
+    "weekly_order_quantity": 1200,
+    "weekly_order_bonus_ratio": 0.25,
+    "machine_upgrade_research_level": 6,
+    "raw_workshop_predeposit_beginner": 500000,
+    "raw_workshop_predeposit_veteran": 2500000,
+    "raw_workshop_veteran_player_level": 80,
+    "silk_align_hours": 10,
+    "default_max_production_hours": 12,
+    "silk_max_production_hours": 20,
+    "late_overflow_prison_level": 20,
+    "warehouse_overflow_warning_ratio": 0.8
+  },
+  "dorm_and_workshop_ladder": {
+    "unlock_prison_levels": [
+      1,
+      6,
+      16,
+      26,
+      36,
+      46
+    ],
+    "dorm_capacity_per_room": 36,
+    "dorm_allocation_per_room": {
+      "finished_workshop": 18,
+      "raw_workshop": 10,
+      "buffer_sick_or_expiry": 8
+    },
+    "workshop_slots_per_room": 18,
+    "machines_per_area": 6
+  },
+  "building_catalog": {
+    "power_center": {
+      "name": "电力中心",
+      "zone": "right_d",
+      "strategy_role": "core_max",
+      "unlock_prison_level": 1,
+      "unlock_research_level": 0,
+      "base_power": 0,
+      "prerequisite_buildings": [],
+      "aliases": [
+        "电力中心"
+      ],
+      "notes": "核心设施，每次整顿中心升级后优先跟升；电机 1~20 槽满配共需 3,500 桦石与 28,700,000 铁盟币。"
+    },
+    "research_center": {
+      "name": "研发中心",
+      "zone": "right_c",
+      "strategy_role": "core_max",
+      "unlock_prison_level": 1,
+      "unlock_research_level": 0,
+      "base_power": 150,
+      "prerequisite_buildings": [],
+      "aliases": [
+        "研发中心"
+      ],
+      "milestones": {
+        "2": "解锁缝纫工具原料车间",
+        "3": "解锁人造纤维原料车间",
+        "4": "解锁植物纤维原料车间",
+        "5": "解锁动物纤维原料车间",
+        "6": "解锁生产车间机器升级（2026实机核实）"
+      },
+      "notes": "核心设施，优先推进：LV2 缝纫、LV3 人造、LV4 植物、LV5 动物、LV6 解锁机器升级。"
+    },
+    "raw_sewing": {
+      "name": "缝纫工具原料车间",
+      "zone": "right_c",
+      "strategy_role": "core_max",
+      "unlock_prison_level": 1,
+      "unlock_research_level": 2,
+      "base_power": 600,
+      "prerequisite_buildings": [
+        "research_center"
+      ],
+      "aliases": [
+        "缝纫工具原料车间",
+        "缝纫工具车间",
+        "缝纫车间"
+      ],
+      "notes": "核心原料车间，全周期永不暂停；无电力陷阱，能升尽量升。"
+    },
+    "raw_synthetic": {
+      "name": "人造纤维原料车间",
+      "zone": "right_d",
+      "strategy_role": "core_max",
+      "unlock_prison_level": 1,
+      "unlock_research_level": 3,
+      "base_power": 600,
+      "prerequisite_buildings": [
+        "research_center"
+      ],
+      "aliases": [
+        "人造纤维原料车间",
+        "人造纤维车间",
+        "人造车间"
+      ],
+      "notes": "核心原料车间，全周期永不暂停；能升尽量升。"
+    },
+    "raw_plant": {
+      "name": "植物纤维原料车间",
+      "zone": "right_c",
+      "strategy_role": "core_max",
+      "unlock_prison_level": 1,
+      "unlock_research_level": 4,
+      "base_power": 600,
+      "prerequisite_buildings": [
+        "research_center"
+      ],
+      "aliases": [
+        "植物纤维原料车间",
+        "植物纤维车间",
+        "植物车间"
+      ],
+      "notes": "核心原料车间（产棉花/亚麻），研发 LV4 解锁；亚麻或蕾丝囤积过多时赚钱期可短暂暂停。"
+    },
+    "raw_animal": {
+      "name": "动物纤维原料车间",
+      "zone": "right_d",
+      "strategy_role": "core_max",
+      "unlock_prison_level": 1,
+      "unlock_research_level": 5,
+      "base_power": 600,
+      "prerequisite_buildings": [
+        "research_center"
+      ],
+      "aliases": [
+        "动物纤维原料车间",
+        "动物纤维车间",
+        "动物车间"
+      ],
+      "notes": "核心原料车间（产蚕丝/羊毛），研发 LV5 解锁；蚕丝或丝绸囤积过多时赚钱期可短暂暂停。"
+    },
+    "raw_warehouse": {
+      "name": "原料仓库",
+      "zone": "left_underground",
+      "strategy_role": "core_max",
+      "unlock_prison_level": 1,
+      "unlock_research_level": 0,
+      "base_power": 0,
+      "prerequisite_buildings": [],
+      "aliases": [
+        "原料仓库"
+      ],
+      "notes": "与成品仓库存放物品无种类限制，快爆仓时可与成品仓库互倒腾周转；金币扩容尽量点满。"
+    },
+    "finished_warehouse": {
+      "name": "成品仓库",
+      "zone": "left_underground",
+      "strategy_role": "core_max",
+      "unlock_prison_level": 1,
+      "unlock_research_level": 0,
+      "base_power": 0,
+      "prerequisite_buildings": [],
+      "aliases": [
+        "成品仓库"
+      ],
+      "notes": "与原料仓库存放物品无种类限制，快爆仓时可与原料仓库互倒腾周转；金币扩容尽量点满。"
+    },
+    "finance_center": {
+      "name": "财务中心",
+      "zone": "right_c",
+      "strategy_role": "utility_once",
+      "unlock_prison_level": 1,
+      "unlock_research_level": 0,
+      "base_power": 0,
+      "prerequisite_buildings": [],
+      "aliases": [
+        "财务中心"
+      ],
+      "notes": "开启并打开“保证金低于80%自动补满”后即可不再管。"
+    },
+    "transfer_center": {
+      "name": "转运中心",
+      "zone": "right_d",
+      "strategy_role": "utility_once",
+      "unlock_prison_level": 9,
+      "unlock_research_level": 0,
+      "base_power": 0,
+      "prerequisite_buildings": [],
+      "aliases": [
+        "转运中心"
+      ],
+      "notes": "整顿中心 LV9 解锁，锚点首选海角城与岚心城；赚钱阶段唯一高价出货通道。"
+    },
+    "dormitory": {
+      "name": "整顿宿舍",
+      "zone": "left_b",
+      "strategy_role": "stepwise_ladder",
+      "unlock_prison_level": 1,
+      "unlock_research_level": 0,
+      "base_power": 400,
+      "prerequisite_buildings": [],
+      "aliases": [
+        "整顿宿舍",
+        "1号整顿宿舍",
+        "2号整顿宿舍",
+        "宿舍"
+      ],
+      "notes": "按末尾为6的等级（1/6/16/26/36/46）逐步新增；每间生活区域全开后按 18成品+10原料+8缓冲 分配。"
+    },
+    "production_workshop": {
+      "name": "生产车间",
+      "zone": "right_c",
+      "strategy_role": "stepwise_ladder",
+      "unlock_prison_level": 1,
+      "unlock_research_level": 0,
+      "base_power": 600,
+      "prerequisite_buildings": [
+        "power_center",
+        "research_center",
+        "infirmary",
+        "confinement_room"
+      ],
+      "aliases": [
+        "生产车间",
+        "1号生产车间",
+        "2号生产车间"
+      ],
+      "notes": "需电力中心、研发中心、医务室、禁闭室开启后放行；按 1/6/16/26/36/46 节奏新增防电力吸干。"
+    },
+    "confinement_room": {
+      "name": "禁闭室",
+      "zone": "left_a",
+      "strategy_role": "prereq_only",
+      "unlock_prison_level": 3,
+      "unlock_research_level": 0,
+      "base_power": 300,
+      "prerequisite_buildings": [],
+      "aliases": [
+        "禁闭室"
+      ],
+      "notes": "LV1 为开启生产车间的硬前置（整顿 LV3 解锁）；开启后属降低坏事件属性挂件，前期无需砸钱。"
+    },
+    "infirmary": {
+      "name": "医务室",
+      "zone": "left_b",
+      "strategy_role": "low_priority",
+      "unlock_prison_level": 1,
+      "unlock_research_level": 0,
+      "base_power": 300,
+      "prerequisite_buildings": [],
+      "aliases": [
+        "医务室"
+      ],
+      "notes": "生产车间前置需建 LV1；后续为属性挂件，前期不优先投资。"
+    },
+    "canteen": {
+      "name": "餐厅",
+      "zone": "left_b",
+      "strategy_role": "low_priority",
+      "unlock_prison_level": 4,
+      "unlock_research_level": 0,
+      "base_power": 300,
+      "prerequisite_buildings": [],
+      "aliases": [
+        "餐厅"
+      ],
+      "notes": "治安/降低坏事件属性挂件（攻略标为不关键），前期省钱缓升。"
+    },
+    "yard": {
+      "name": "放风场地",
+      "zone": "left_a",
+      "strategy_role": "low_priority",
+      "unlock_prison_level": 5,
+      "unlock_research_level": 0,
+      "base_power": 300,
+      "prerequisite_buildings": [],
+      "aliases": [
+        "放风场地",
+        "放风场"
+      ],
+      "notes": "治安/降低坏事件属性挂件（攻略标为不关键），前期省钱缓升。"
+    },
+    "visiting_room": {
+      "name": "探视室",
+      "zone": "left_a",
+      "strategy_role": "low_priority",
+      "unlock_prison_level": 6,
+      "unlock_research_level": 0,
+      "base_power": 300,
+      "prerequisite_buildings": [],
+      "aliases": [
+        "探视室"
+      ],
+      "notes": "治安/降低坏事件属性挂件（攻略标为不关键），前期省钱缓升。"
+    },
+    "security_center": {
+      "name": "安保中心",
+      "zone": "left_a",
+      "strategy_role": "low_priority",
+      "unlock_prison_level": 8,
+      "unlock_research_level": 0,
+      "base_power": 300,
+      "prerequisite_buildings": [],
+      "aliases": [
+        "安保中心"
+      ],
+      "notes": "整顿 LV8 解锁，治安属性挂件（攻略标为不关键），前期不优先砸钱。"
+    },
+    "parole_room": {
+      "name": "假释室",
+      "zone": "left_b",
+      "strategy_role": "ignore",
+      "unlock_prison_level": 7,
+      "unlock_research_level": 0,
+      "base_power": 300,
+      "prerequisite_buildings": [],
+      "aliases": [
+        "假释室"
+      ],
+      "notes": "抓囚犯消耗的体力/疲劳远贵于假释收益，新手直接无视，让囚犯工作至刑满。"
+    }
+  },
+  "power_motors": [
+    {"slot": 1, "huashi": 100, "coins": 10000},
+    {"slot": 2, "huashi": 100, "coins": 40000},
+    {"slot": 3, "huashi": 100, "coins": 90000},
+    {"slot": 4, "huashi": 100, "coins": 160000},
+    {"slot": 5, "huashi": 100, "coins": 250000},
+    {"slot": 6, "huashi": 150, "coins": 360000},
+    {"slot": 7, "huashi": 150, "coins": 490000},
+    {"slot": 8, "huashi": 150, "coins": 640000},
+    {"slot": 9, "huashi": 150, "coins": 810000},
+    {"slot": 10, "huashi": 150, "coins": 1000000},
+    {"slot": 11, "huashi": 200, "coins": 1210000},
+    {"slot": 12, "huashi": 200, "coins": 1440000},
+    {"slot": 13, "huashi": 200, "coins": 1690000},
+    {"slot": 14, "huashi": 200, "coins": 1960000},
+    {"slot": 15, "huashi": 200, "coins": 2250000},
+    {"slot": 16, "huashi": 250, "coins": 2560000},
+    {"slot": 17, "huashi": 250, "coins": 2890000},
+    {"slot": 18, "huashi": 250, "coins": 3240000},
+    {"slot": 19, "huashi": 250, "coins": 3610000},
+    {"slot": 20, "huashi": 250, "coins": 4000000}
+  ],
+  "sewing_machine_upgrades": [
+    {"from_level": 1, "to_level": 2, "coins": 10000, "work_tickets": 100, "extra_output_percent": 2.0, "required_research_level": 6},
+    {"from_level": 2, "to_level": 3, "coins": 30000, "work_tickets": 300, "extra_output_percent": 3.0, "required_research_level": 6},
+    {"from_level": 3, "to_level": 4, "coins": 60000, "work_tickets": 600, "extra_output_percent": 4.0, "required_research_level": 6},
+    {"from_level": 4, "to_level": 5, "coins": 100000, "work_tickets": 1000, "extra_output_percent": 5.0, "required_research_level": 6},
+    {"from_level": 5, "to_level": 6, "coins": 150000, "work_tickets": 1500, "extra_output_percent": 6.0, "required_research_level": 6},
+    {"from_level": 6, "to_level": 7, "coins": 210000, "work_tickets": 2100, "extra_output_percent": 7.0, "required_research_level": 6},
+    {"from_level": 7, "to_level": 8, "coins": 280000, "work_tickets": 2800, "extra_output_percent": 8.0, "required_research_level": 6},
+    {"from_level": 8, "to_level": 9, "coins": 360000, "work_tickets": 3600, "extra_output_percent": 9.0, "required_research_level": 6},
+    {"from_level": 9, "to_level": 10, "coins": 450000, "work_tickets": 4500, "extra_output_percent": 10.0, "required_research_level": 6}
+  ],
+  "raw_workshop_upgrades": [
+    {"from_level": 0, "to_level": 1, "coins": 100000, "power_cost": 600, "prisoner_slots": 6, "extra_output_percent": 0.0, "build_minutes": 5},
+    {"from_level": 1, "to_level": 2, "coins": 300000, "power_cost": 700, "prisoner_slots": 7, "extra_output_percent": 2.0, "build_minutes": 15, "required_research_level": 7},
+    {"from_level": 2, "to_level": 3, "coins": 600000, "power_cost": 800, "prisoner_slots": 8, "extra_output_percent": 3.0, "build_minutes": 30, "required_research_level": 7},
+    {"from_level": 3, "to_level": 4, "coins": 1000000, "power_cost": 900, "prisoner_slots": 9, "extra_output_percent": 4.0, "build_minutes": 60, "required_research_level": 7},
+    {"from_level": 4, "to_level": 5, "coins": 1500000, "power_cost": 1000, "prisoner_slots": 10, "extra_output_percent": 5.0, "build_minutes": 90, "required_research_level": 7},
+    {"from_level": 5, "to_level": 6, "coins": 2100000, "power_cost": 1100, "prisoner_slots": 11, "extra_output_percent": 6.0, "build_minutes": 120, "required_research_level": 7},
+    {"from_level": 6, "to_level": 7, "coins": 2800000, "power_cost": 1200, "prisoner_slots": 12, "extra_output_percent": 7.0, "build_minutes": 180, "required_research_level": 7},
+    {"from_level": 7, "to_level": 8, "coins": 3600000, "power_cost": 1300, "prisoner_slots": 13, "extra_output_percent": 8.0, "build_minutes": 240, "required_research_level": 7},
+    {"from_level": 8, "to_level": 9, "coins": 4500000, "power_cost": 1400, "prisoner_slots": 14, "extra_output_percent": 9.0, "build_minutes": 360, "required_research_level": 7},
+    {"from_level": 9, "to_level": 10, "coins": 5500000, "power_cost": 1500, "prisoner_slots": 15, "extra_output_percent": 10.0, "build_minutes": 480, "required_research_level": 7}
+  ],
+  "rush_leveling_goods": [
+    {"name": "尼龙晴雨伞", "guide_index": 1, "rating": 2, "daily_recommended": true, "weekly_recommended": true, "early_only_overflow_risk": false, "defer_until_surplus": false, "notes": "前期主力冲级高效单品"},
+    {"name": "牛仔布", "guide_index": 1, "rating": 2, "daily_recommended": true, "weekly_recommended": true, "early_only_overflow_risk": true, "defer_until_surplus": false, "notes": "前期做，后期极易爆仓不推荐继续大量生产"},
+    {"name": "牛仔裤", "guide_index": 2, "rating": 1, "daily_recommended": true, "weekly_recommended": true, "early_only_overflow_risk": true, "defer_until_surplus": false, "notes": "前期做，后期极易爆仓不推荐继续大量生产"},
+    {"name": "无纺布", "guide_index": 3, "rating": 1, "daily_recommended": true, "weekly_recommended": true, "early_only_overflow_risk": false, "defer_until_surplus": false, "notes": "常规冲级高效单品"},
+    {"name": "纯棉布料", "guide_index": 4, "rating": 2, "daily_recommended": true, "weekly_recommended": true, "early_only_overflow_risk": false, "defer_until_surplus": false, "notes": "核心冲级高效布料"},
+    {"name": "纯棉T恤", "guide_index": 6, "rating": 1, "daily_recommended": true, "weekly_recommended": true, "early_only_overflow_risk": false, "defer_until_surplus": false, "notes": "常规冲级高效单品"},
+    {"name": "棉花枕头", "guide_index": 8, "rating": 1, "daily_recommended": true, "weekly_recommended": true, "early_only_overflow_risk": false, "defer_until_surplus": false, "notes": "常规冲级高效单品"},
+    {"name": "冲锋衣", "guide_index": 10, "rating": null, "daily_recommended": false, "weekly_recommended": true, "early_only_overflow_risk": false, "defer_until_surplus": false, "notes": "特例：仅周单做，每日订单直接删除"},
+    {"name": "灯芯绒", "guide_index": 12, "rating": 2, "daily_recommended": true, "weekly_recommended": true, "early_only_overflow_risk": false, "defer_until_surplus": false, "notes": "高经验效率布料"},
+    {"name": "羊毛布料", "guide_index": 16, "rating": 2, "daily_recommended": true, "weekly_recommended": true, "early_only_overflow_risk": false, "defer_until_surplus": false, "notes": "高经验效率布料"},
+    {"name": "法兰绒", "guide_index": 18, "rating": 1, "daily_recommended": true, "weekly_recommended": true, "early_only_overflow_risk": false, "defer_until_surplus": false, "notes": "常规冲级高效布料"},
+    {"name": "灯芯绒休闲裤", "guide_index": 20, "rating": 2, "daily_recommended": true, "weekly_recommended": true, "early_only_overflow_risk": false, "defer_until_surplus": false, "notes": "高经验效率成品"},
+    {"name": "法兰绒靠垫", "guide_index": 21, "rating": 2, "daily_recommended": true, "weekly_recommended": true, "early_only_overflow_risk": false, "defer_until_surplus": false, "notes": "高经验效率成品"},
+    {"name": "轻奢女装", "guide_index": 24, "rating": 2, "daily_recommended": true, "weekly_recommended": true, "early_only_overflow_risk": false, "defer_until_surplus": false, "notes": "高经验效率成品"},
+    {"name": "法兰绒睡衣", "guide_index": 28, "rating": 1, "daily_recommended": true, "weekly_recommended": true, "early_only_overflow_risk": false, "defer_until_surplus": false, "notes": "常规冲级高效成品"},
+    {"name": "花呢上衣", "guide_index": 30, "rating": null, "daily_recommended": true, "weekly_recommended": true, "early_only_overflow_risk": false, "defer_until_surplus": false, "notes": "表中高效冲级成品（原视频字幕遮挡星级）"},
+    {"name": "羽绒服", "guide_index": 32, "rating": null, "daily_recommended": true, "weekly_recommended": true, "early_only_overflow_risk": false, "defer_until_surplus": false, "notes": "表中高效冲级成品（原视频字幕遮挡星级）"},
+    {"name": "蕾丝连衣裙", "guide_index": 36, "rating": 3, "daily_recommended": true, "weekly_recommended": true, "early_only_overflow_risk": false, "defer_until_surplus": false, "notes": "顶尖冲级/赚钱兼顾成品"},
+    {"name": "西服", "guide_index": 38, "rating": 1, "daily_recommended": true, "weekly_recommended": true, "early_only_overflow_risk": false, "defer_until_surplus": false, "notes": "常规冲级高效成品"},
+    {"name": "真丝睡衣", "guide_index": 42, "rating": 2, "daily_recommended": true, "weekly_recommended": true, "early_only_overflow_risk": false, "defer_until_surplus": true, "notes": "虽推荐做，但前期不建议先做，等其他货物不太缺再排产"},
+    {"name": "羊绒衫", "guide_index": 46, "rating": 1, "daily_recommended": true, "weekly_recommended": true, "early_only_overflow_risk": false, "defer_until_surplus": false, "notes": "常规冲级高效成品"}
+  ],
+  "profit_harvest_goods": [
+    {
+      "name": "真丝睡衣",
+      "workshops": ["raw_animal", "raw_sewing"],
+      "materials": ["蚕丝", "绣线", "缝纫工具包"],
+      "intermediate_align_hours": {"丝绸": 10},
+      "notes": "动缝线主力，蚕丝→丝绸可设 10h 与其他产线对齐同收（上限 20h）"
+    },
+    {
+      "name": "蕾丝连衣裙",
+      "workshops": ["raw_plant", "raw_sewing"],
+      "materials": ["亚麻", "绣线", "缝纫工具包"],
+      "intermediate_align_hours": {},
+      "notes": "植缝线主力，不与动物/人造产线抢基础纤维"
+    },
+    {
+      "name": "阿妮塔连体衣",
+      "workshops": ["raw_synthetic", "raw_sewing"],
+      "materials": ["太空棉", "芳纶纤维", "绣线", "缝纫工具包"],
+      "intermediate_align_hours": {},
+      "notes": "人缝线主力，毕业高收益直卖成品"
+    }
+  ],
+  "profit_harvest_rules": {
+    "never_pause_workshops": ["raw_sewing", "raw_synthetic"],
+    "pausable_when_overflow": ["raw_plant", "raw_animal"],
+    "restock_city": "云岫桥基地",
+    "restock_items": ["缝纫工具包", "绣线"],
+    "sell_cities": ["海角城", "岚心城"],
+    "notes": "毕业赚钱阶段停止交付黑月订单，改用转运中心把三巨头成品运往海角城或岚心城价格更高的一方出售。"
+  },
+  "purchase_station_rules": {
+    "item_aliases": {
+      "缝纫包": "缝纫工具包"
+    },
+    "blocked_conversions": [
+      {
+        "from_item": "缝纫工具包",
+        "to_item": "蚕丝",
+        "min_prison_level": 36,
+        "always_block": true,
+        "reason": "36级起高危暗雷：无研发前置的缝纫包转蚕丝会榨干稀缺缝纫工具包，导致主产线断档。"
+      }
+    ]
+  },
+  "exchange_shop_rules": {
+    "blocked_renewable_items": [
+      "逮捕令",
+      "超级帮帮券"
+    ],
+    "huashi_trap_items": [
+      {
+        "name": "超级帮帮券",
+        "currency": "huashi",
+        "unit_cost": 10,
+        "limit": 48,
+        "notes": "兑换商店并列桦石陷阱，严禁兑换。"
+      }
+    ],
+    "recommended_one_time_items": [
+      {
+        "name": "拉普拉斯协议",
+        "currency": "work_tickets",
+        "unit_cost": 8000,
+        "total_limit": 10,
+        "category": "growth_gacha",
+        "notes": "一次性抽卡协议（2+3+5），性价比极高，优先兑换。"
+      },
+      {
+        "name": "自观测胶卷",
+        "currency": "work_tickets",
+        "unit_cost": 4000,
+        "total_limit": 30,
+        "category": "growth_equip",
+        "notes": "一次性装备强化胶卷，养成刚需。"
+      },
+      {
+        "name": "研发配方",
+        "currency": "work_tickets_and_coins",
+        "unit_cost": null,
+        "total_limit": null,
+        "category": "prison_recipe",
+        "notes": "一次性解锁新布料/纺织品制造配方。"
+      }
+    ]
+  }
+}

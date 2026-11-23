@@ -284,7 +284,7 @@
         {
             "name": "daily-all-in-one",
             "label": "一键自动日常",
-            "description": "拆分为独立可勾选、可调顺序的完整日常流程：开始唤醒 -> 前置收菜与签到 -> 自动商店采购 -> 共斗众志攻坚 -> 限时活动刷关清澄明度 -> 糖霜记忆每日取景 -> [可选]铁安局 / 区域作战中心 / 虚演刻录 / 自动跑商 -> 每日活跃与通行证收尾领奖。",
+            "description": "拆分为独立可勾选、可调顺序的完整日常流程：开始唤醒 -> 前置收菜与签到 -> 自动商店采购 -> 共斗众志攻坚 -> 限时活动刷关清澄明度 -> 糖霜记忆每日取景 -> [可选]铁安局 / 区域作战中心 / 虚演刻录 / 整顿中心（监狱） / 自动跑商 -> 每日活跃与通行证收尾领奖。",
             "task": [
                 {
                     "name": "WakeUp",
@@ -329,6 +329,17 @@
                     "enabled": false,
                     "option": {
                         "CalculationRecordingAutoEnterHub": "Yes"
+                    }
+                },
+                {
+                    "name": "PrisonPlanScan",
+                    "enabled": false,
+                    "option": {
+                        "PrisonPlanExecMode": "ExecuteSafeAuto",
+                        "PrisonPlanAutoScope": "FullSafe",
+                        "PrisonPlanReserveCoins": "Reserve15M",
+                        "PrisonPlanAutoOpenReport": "No",
+                        "PrisonPlanDebugExport": "LogAndBundle"
                     }
                 },
                 {
@@ -446,6 +457,17 @@
             "task": [
                 {
                     "name": "AssistMonitor",
+                    "enabled": true
+                }
+            ]
+        },
+        {
+            "name": "prison-plan-scan",
+            "label": "整顿中心（监狱）自动（实验型）",
+            "description": "整顿中心（监狱）专属自动管家（支持抽屉远程打开，亦可并入一键自动日常）：先扫描整顿等级、建筑、双仓、商店工票与黑月订单，再在铁盟币保留底线、零桦石像素护栏与 1/6/16/26/36/46 阶梯锁保护下安全自动执行 14 项细分动作，并自动生成 HTML 看板与 config/planning/logs/ 脱敏排错压缩包。",
+            "task": [
+                {
+                    "name": "PrisonPlanScan",
                     "enabled": true
                 }
             ]
@@ -598,6 +620,7 @@
         "resource/tasks/EventStoryDaily.json",
         "resource/tasks/DailyClaim.json",
         "resource/tasks/DailyRoutine.json",
+        "resource/tasks/PrisonPlanScan.json",
         "resource/tasks/ManualTwoCityBusiness.json",
         "resource/tasks/AutoTwoCityBusiness.json",
         "resource/tasks/SecurityAgency.json",

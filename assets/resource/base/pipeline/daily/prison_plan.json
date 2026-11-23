@@ -1,0 +1,108 @@
+{
+    "PrisonPlanStart": {
+        "recognition": "DirectHit",
+        "action": "Custom",
+        "custom_action": "prison_plan_scan_run",
+        "focus": {
+            "Node.Action.Starting": "【整顿中心（实验型）】正在扫描实况并按安全护栏自动处理做什么/买什么/造什么..."
+        },
+        "next": [
+            "PrisonPlanComplete"
+        ],
+        "on_error": [
+            "PrisonPlanComplete"
+        ]
+    },
+    "PrisonPlanOptExecMode": {
+        "action": "DoNothing",
+        "attach": {
+            "exec_mode": "execute_safe_auto"
+        }
+    },
+    "PrisonPlanOptAutoScope": {
+        "action": "DoNothing",
+        "attach": {
+            "auto_scope": "full_safe",
+            "modules_ui_configured": false
+        }
+    },
+    "PrisonPlanOptEnabledModules": {
+        "action": "DoNothing",
+        "attach": {}
+    },
+    "PrisonPlanOptReserveCoins": {
+        "action": "DoNothing",
+        "attach": {
+            "reserve_coins": 15000000,
+            "use_custom_reserve_coins": false
+        }
+    },
+    "PrisonPlanOptCustomReserveCoins": {
+        "action": "DoNothing",
+        "attach": {
+            "custom_reserve_coins": 20000000
+        }
+    },
+    "PrisonPlanOptScanSubpages": {
+        "action": "DoNothing",
+        "attach": {
+            "scan_subpages": true
+        }
+    },
+    "PrisonPlanOptHuashiStrategy": {
+        "action": "DoNothing",
+        "attach": {
+            "allow_huashi_motors": false,
+            "allow_huashi_warehouse": false
+        }
+    },
+    "PrisonPlanOptPlayerLevel": {
+        "action": "DoNothing",
+        "attach": {
+            "player_level": 71
+        }
+    },
+    "PrisonPlanOptAutoOpenReport": {
+        "action": "DoNothing",
+        "attach": {
+            "auto_open_report": true
+        }
+    },
+    "PrisonPlanOptProdDuration": {
+        "action": "DoNothing",
+        "attach": {
+            "prod_duration_pref": "8h"
+        }
+    },
+    "PrisonPlanOptRawWorkerMode": {
+        "action": "DoNothing",
+        "attach": {
+            "raw_worker_mode": "balanced"
+        }
+    },
+    "PrisonPlanOptWarehouseBatchCap": {
+        "action": "DoNothing",
+        "attach": {
+            "warehouse_batch_cap": 2
+        }
+    },
+    "PrisonPlanOptCoreUpgradeCap": {
+        "action": "DoNothing",
+        "attach": {
+            "core_upgrade_cap": 3
+        }
+    },
+    "PrisonPlanOptDebugExport": {
+        "action": "DoNothing",
+        "attach": {
+            "diag_export_mode": "bundle"
+        }
+    },
+    "PrisonPlanComplete": {
+        "recognition": "DirectHit",
+        "action": "DoNothing",
+        "focus": {
+            "Node.Action.Succeeded": "【整顿中心（实验型）】任务已完成（全程受零桦石与铁盟币底线护栏保护）。"
+        }
+    }
+}
