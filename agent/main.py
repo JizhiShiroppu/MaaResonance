@@ -29,6 +29,7 @@ import daily_routine_action
 import event_stage_farm_action
 import event_story_daily_action
 import guarded_click_action
+import island_plan_action
 import mainline_quest_action
 import network_guard_action
 import prison_plan_action

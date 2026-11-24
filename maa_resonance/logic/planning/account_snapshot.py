@@ -110,8 +110,49 @@ class PrisonSnapshot(BaseModel):
     updated_at: Optional[str] = None
 
 
+class IslandSnapshot(BaseModel):
+    """海岛（蜃息岛）当前经营与建设状态快照。"""
+
+    level: int = 0
+    exp: int = 0
+    exp_next: int = 0
+    unlocked_islands: int = 1
+    cabin_level: int = 0
+    trash_station_level: int = 1
+    stability_current: int = 0
+    stability_max: int = 200
+    active_monsters: int = 0
+    visitors_current: int = 0
+    visitors_capacity: int = 0
+    total_visitors: int = 0
+    operating_days: int = 0
+    facilities_count: int = 0
+    decorations_count: int = 0
+    cleanliness_pct: int = 100
+    trash_rate_per_hour: int = 0
+    trash_blocks_stored: int = 0
+    trash_blocks_cap: int = 0
+    trash_pending_raw: int = 0
+    scores: Dict[str, int] = Field(default_factory=dict)
+    avg_stay_days: float = 1.0
+    share_ratio_pct: float = 3.0
+    ticket_price: int = 500
+    tax_rate_pct: float = 5.0
+    invested_total: int = 0
+    invest_remaining: int = 0
+    pending_revenue_coins: int = 0
+    today_revenue_coins: int = 0
+    material_tickets: int = 0
+    shell_coins: int = 0
+    volleyball_coins: int = 0
+    friend_help_remaining: int = 5
+    friend_clean_done_today: int = 0
+    graduated: bool = False
+    updated_at: Optional[str] = None
+
+
 class AccountSnapshot(BaseModel):
-    """跨跑商、整顿中心与乘员养成的统一只读账号快照。"""
+    """跨跑商、整顿中心、海岛与乘员养成的统一只读账号快照。"""
 
     uid: str = "unknown"
     updated_at: Optional[str] = None
@@ -121,6 +162,7 @@ class AccountSnapshot(BaseModel):
     crew_progression: Dict[str, CrewProgressionEntry] = Field(default_factory=dict)
     materials_inventory: Dict[str, MaterialInventoryEntry] = Field(default_factory=dict)
     prison: PrisonSnapshot = Field(default_factory=PrisonSnapshot)
+    island: IslandSnapshot = Field(default_factory=IslandSnapshot)
 
     def effective_role_resonance(self, role_name: str) -> Optional[int]:
         """优先读取 crew_progression 中记录的共振等级，缺失时回退到 trade.role_resonance。"""
@@ -210,6 +252,11 @@ def snapshot_from_account_payload(payload: Mapping[str, Any]) -> AccountSnapshot
         raw_prison["buildings"] = _normalize_building_levels(raw_prison.get("buildings"))
     prison = PrisonSnapshot.model_validate(raw_prison)
 
+    raw_island = dict(payload.get("island") or {}) if isinstance(payload.get("island"), Mapping) else {}
+    if "scores" in raw_island:
+        raw_island["scores"] = _normalize_int_map(raw_island.get("scores"))
+    island = IslandSnapshot.model_validate(raw_island)
+
     uid = str(payload.get("uid") or "unknown").strip() or "unknown"
     updated_at = str(payload.get("updated_at")).strip() if payload.get("updated_at") is not None else None
 
@@ -222,6 +269,7 @@ def snapshot_from_account_payload(payload: Mapping[str, Any]) -> AccountSnapshot
         crew_progression=crew_progression,
         materials_inventory=materials_inventory,
         prison=prison,
+        island=island,
     )
 
 
@@ -255,10 +303,11 @@ def save_account_snapshot_sections(
     crew_progression: Optional[Mapping[str, CrewProgressionEntry | Mapping[str, Any]]] = None,
     materials_inventory: Optional[Mapping[str, MaterialInventoryEntry | Mapping[str, Any] | int]] = None,
     prison: Optional[PrisonSnapshot | Mapping[str, Any]] = None,
+    island: Optional[IslandSnapshot | Mapping[str, Any]] = None,
     merge_crew: bool = True,
     merge_materials: bool = True,
 ) -> Path:
-    """非破坏式写入账号扩展段（wallet / crew_progression / materials_inventory / prison），完整保留原有 trade/planner 等键。"""
+    """非破坏式写入账号扩展段（wallet / crew_progression / materials_inventory / prison / island），完整保留原有 trade/planner 等键。"""
     target = Path(path)
     existing = read_json(target, {})
     payload: dict[str, Any] = dict(existing) if isinstance(existing, dict) else {}
@@ -327,6 +376,15 @@ def save_account_snapshot_sections(
         if not prison_model.updated_at:
             prison_model = prison_model.model_copy(update={"updated_at": now_ts})
         payload["prison"] = prison_model.model_dump(mode="json")
+
+    if island is not None:
+        raw_island = dict(island) if isinstance(island, Mapping) else island.model_dump(mode="python")
+        if "scores" in raw_island:
+            raw_island["scores"] = _normalize_int_map(raw_island.get("scores"))
+        island_model = IslandSnapshot.model_validate(raw_island)
+        if not island_model.updated_at:
+            island_model = island_model.model_copy(update={"updated_at": now_ts})
+        payload["island"] = island_model.model_dump(mode="json")
 
     _atomic_write_json(target, payload)
     return target

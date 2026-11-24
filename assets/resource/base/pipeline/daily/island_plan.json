@@ -1,0 +1,84 @@
+{
+    "IslandPlanStart": {
+        "recognition": "DirectHit",
+        "action": "Custom",
+        "custom_action": "island_plan_scan_run",
+        "focus": {
+            "Node.Action.Starting": "【海岛（实验型）】正在扫描海岛实况并按安全护栏执行零风险日常..."
+        },
+        "next": [
+            "IslandPlanComplete"
+        ],
+        "on_error": [
+            "IslandPlanComplete"
+        ]
+    },
+    "IslandPlanOptExecMode": {
+        "action": "DoNothing",
+        "attach": {
+            "exec_mode": "execute_safe_auto"
+        }
+    },
+    "IslandPlanOptAutoScope": {
+        "action": "DoNothing",
+        "attach": {
+            "auto_scope": "daily_fast",
+            "modules_ui_configured": false
+        }
+    },
+    "IslandPlanOptEnabledModules": {
+        "action": "DoNothing",
+        "attach": {}
+    },
+    "IslandPlanOptReserveCoins": {
+        "action": "DoNothing",
+        "attach": {
+            "reserve_coins": 15000000,
+            "use_custom_reserve_coins": false
+        }
+    },
+    "IslandPlanOptCustomReserveCoins": {
+        "action": "DoNothing",
+        "attach": {
+            "custom_reserve_coins": 20000000
+        }
+    },
+    "IslandPlanOptOwnMonsterCap": {
+        "action": "DoNothing",
+        "attach": {
+            "max_own_monster_fights": 5
+        }
+    },
+    "IslandPlanOptFriendCleanCap": {
+        "action": "DoNothing",
+        "attach": {
+            "max_friend_clean_count": 3,
+            "max_friend_visits": 6
+        }
+    },
+    "IslandPlanOptFriendHelpCap": {
+        "action": "DoNothing",
+        "attach": {
+            "max_friend_help_fights": 3
+        }
+    },
+    "IslandPlanOptAutoOpenReport": {
+        "action": "DoNothing",
+        "attach": {
+            "auto_open_report": true
+        }
+    },
+    "IslandPlanOptDebugExport": {
+        "action": "DoNothing",
+        "attach": {
+            "diag_export_mode": "bundle"
+        }
+    },
+    "IslandPlanComplete": {
+        "recognition": "DirectHit",
+        "action": "DoNothing",
+        "focus": {
+            "Node.Action.Succeeded": "【海岛（实验型）】已完成实况扫描与日常闭环，详情见 config/planning/latest_island_report_<uid>.html。"
+        }
+    }
+}

@@ -2186,6 +2186,230 @@ class PrisonLiveLogRegressionTests(unittest.TestCase):
             self.assertTrue(any(n == "LdScan_WsEditApply_1号生产车间" for n, _ in taps_ld))
             self.assertTrue(any(e.action_type == "ws_set_leader" for e in state_ld.executed))
 
+    def test_zoomed_room_exit_unzoom_and_pan_stall_recovery(self) -> None:
+        from unittest import mock
+        import numpy as np
+        from maa_resonance.logic.planning import (
+            PRISON_BACK_POINT,
+            PRISON_RIGHT_WING_PAN_SWIPE,
+            ROOM_BUBBLE_ROI,
+            ROOM_UNZOOM_LEFT_COL_POINT,
+            ROOM_UNZOOM_RIGHT_COL_POINT,
+            find_room_bubble_point,
+        )
+
+        # 1. ROOM_BUBBLE_ROI 垂直范围覆盖电力中心退回放大态后上移到 y=244 的「建设」气泡
+        rx, ry, rw, rh = ROOM_BUBBLE_ROI
+        self.assertLessEqual(ry, 244)
+        self.assertGreaterEqual(ry + rh, 244 + 25)
+        self.assertLessEqual(rx, 788)
+        self.assertGreaterEqual(rx + rw, 788 + 48)
+        self.assertEqual(
+            find_room_bubble_point([{"text": "建设", "box": [788, 244, 48, 25]}], "建设", (793, 349)),
+            (812, 256),
+        )
+
+        with _real_maa_agent_env() as ok_maa:
+            if not ok_maa:
+                self.skipTest("maafw is not installed")
+            import agent.prison_plan_action as ppa
+
+            frame = np.zeros((720, 1280, 3), dtype=np.uint8)
+            full_dock = [
+                {"text": "仓库", "box": [58, 665, 35, 19]},
+                {"text": "订单站", "box": [137, 664, 54, 21]},
+                {"text": "采购", "box": [235, 664, 36, 19]},
+                {"text": "生活技能兑换商店", "box": [308, 662, 158, 24]},
+                {"text": "拼单单", "box": [496, 664, 53, 20]},
+            ]
+            normal_top = [{"text": "帮助"}, {"text": "Lv8•"}, {"text": "40/90"}, {"text": "11/24"}, {"text": "7200/16800"}]
+
+            class _FakeCtx:
+                pass
+
+            # 2a. 电力中心退出侧面板后仅 Dock 可见、Top 为空 -> 必须点空白解除放大态，不得跳过
+            taps_pwr: list[tuple[str, tuple[int, int]]] = []
+
+            def fake_ocr_pwr(_ctx, _img, name, _roi):
+                if name.endswith("Chk1Top"):
+                    return []
+                if name.endswith("Chk2Top"):
+                    return normal_top
+                if "Dock" in name:
+                    return full_dock
+                return []
+
+            with (
+                mock.patch.object(ppa, "is_stopping", return_value=False),
+                mock.patch.object(ppa, "safe_screencap", return_value=frame),
+                mock.patch.object(ppa, "sleep_with_stop", return_value=True),
+                mock.patch.object(ppa, "ocr_roi", side_effect=fake_ocr_pwr),
+                mock.patch.object(ppa, "tap_point", side_effect=lambda _c, nm, pt: taps_pwr.append((nm, (int(pt[0]), int(pt[1])))) or True),
+            ):
+                ok_pwr = ppa._exit_zoomed_panel_to_overview(_FakeCtx(), "Pwr_", ROOM_UNZOOM_RIGHT_COL_POINT)
+
+            self.assertTrue(ok_pwr)
+            self.assertEqual(
+                taps_pwr,
+                [("Pwr_ExitPanel", PRISON_BACK_POINT), ("Pwr_Unzoom", ROOM_UNZOOM_RIGHT_COL_POINT)],
+            )
+
+            # 2b. UnzoomAlt 生效后立即返回 True，不再盲调 FallbackBack 误点左上角返回
+            taps_alt: list[tuple[str, tuple[int, int]]] = []
+
+            def fake_ocr_alt(_ctx, _img, name, _roi):
+                if name.endswith("Chk3Top"):
+                    return normal_top
+                if "Dock" in name:
+                    return full_dock
+                return []
+
+            with (
+                mock.patch.object(ppa, "is_stopping", return_value=False),
+                mock.patch.object(ppa, "safe_screencap", return_value=frame),
+                mock.patch.object(ppa, "sleep_with_stop", return_value=True),
+                mock.patch.object(ppa, "ocr_roi", side_effect=fake_ocr_alt),
+                mock.patch.object(ppa, "tap_point", side_effect=lambda _c, nm, pt: taps_alt.append((nm, (int(pt[0]), int(pt[1])))) or True),
+            ):
+                ok_alt = ppa._exit_zoomed_panel_to_overview(_FakeCtx(), "Alt_", ROOM_UNZOOM_RIGHT_COL_POINT)
+
+            self.assertTrue(ok_alt)
+            self.assertEqual(
+                taps_alt,
+                [
+                    ("Alt_ExitPanel", PRISON_BACK_POINT),
+                    ("Alt_Unzoom", ROOM_UNZOOM_RIGHT_COL_POINT),
+                    ("Alt_UnzoomAlt", ROOM_UNZOOM_LEFT_COL_POINT),
+                ],
+            )
+            self.assertFalse(any("FallbackBack" in nm for nm, _ in taps_alt))
+
+            # 3. _ensure_on_prison_overview 与 _back_to_prison_overview 识别放大聚焦态后先点空白解除
+            taps_ens: list[tuple[str, tuple[int, int]]] = []
+
+            def fake_ocr_ens(_ctx, _img, name, _roi):
+                if name.endswith("OvChkTop"):
+                    return [{"text": "12", "box": [130, 48, 18, 12]}]
+                if name.endswith("Chk2Top"):
+                    return normal_top
+                if "Dock" in name:
+                    return full_dock
+                return []
+
+            with (
+                mock.patch.object(ppa, "is_stopping", return_value=False),
+                mock.patch.object(ppa, "safe_screencap", return_value=frame),
+                mock.patch.object(ppa, "sleep_with_stop", return_value=True),
+                mock.patch.object(ppa, "ocr_roi", side_effect=fake_ocr_ens),
+                mock.patch.object(ppa, "tap_point", side_effect=lambda _c, nm, pt: taps_ens.append((nm, (int(pt[0]), int(pt[1])))) or True),
+            ):
+                ok_ens = ppa._ensure_on_prison_overview(_FakeCtx(), "Ens_")
+
+            self.assertTrue(ok_ens)
+            self.assertEqual(taps_ens, [("Ens_OvUnzoomUnzoom", ROOM_UNZOOM_RIGHT_COL_POINT)])
+
+            taps_bk: list[tuple[str, tuple[int, int]]] = []
+
+            def fake_ocr_bk(_ctx, _img, name, _roi):
+                if name.endswith("BackTop0_0"):
+                    return []
+                if name.endswith("Chk2Top"):
+                    return normal_top
+                if "Dock" in name:
+                    return full_dock
+                return []
+
+            with (
+                mock.patch.object(ppa, "is_stopping", return_value=False),
+                mock.patch.object(ppa, "safe_screencap", return_value=frame),
+                mock.patch.object(ppa, "sleep_with_stop", return_value=True),
+                mock.patch.object(ppa, "ocr_roi", side_effect=fake_ocr_bk),
+                mock.patch.object(ppa, "tap_point", side_effect=lambda _c, nm, pt: taps_bk.append((nm, (int(pt[0]), int(pt[1])))) or True),
+            ):
+                ok_bk = ppa._back_to_prison_overview(_FakeCtx(), "Bk_")
+
+            self.assertTrue(ok_bk)
+            self.assertEqual(
+                taps_bk,
+                [("Bk_Back0", PRISON_BACK_POINT), ("Bk_ZoomExit0Unzoom", ROOM_UNZOOM_RIGHT_COL_POINT)],
+            )
+
+            # 4a. _pan_and_find_room 检测到放大态气泡提示后先点空白解除再定位，不执行无效拖拽
+            taps_hint: list[tuple[str, tuple[int, int]]] = []
+            swipes_hint: list[str] = []
+
+            def fake_ocr_hint(_ctx, _img, name, _roi):
+                if name.endswith("GridCur"):
+                    return [
+                        {"text": "电力中心LV8", "box": [105, 161, 219, 37]},
+                        {"text": "建设", "box": [788, 244, 48, 25]},
+                    ]
+                if name.endswith("ZoomHintTop"):
+                    return []
+                if name.endswith("Chk2Top"):
+                    return normal_top
+                if name.endswith("GridUnzoom"):
+                    return [{"text": "缝纫工具原料车间LV2", "box": [332, 227, 145, 21]}]
+                if "Dock" in name:
+                    return full_dock
+                return []
+
+            with (
+                mock.patch.object(ppa, "is_stopping", return_value=False),
+                mock.patch.object(ppa, "safe_screencap", return_value=frame),
+                mock.patch.object(ppa, "sleep_with_stop", return_value=True),
+                mock.patch.object(ppa, "ocr_roi", side_effect=fake_ocr_hint),
+                mock.patch.object(ppa, "tap_point", side_effect=lambda _c, nm, pt: taps_hint.append((nm, (int(pt[0]), int(pt[1])))) or True),
+                mock.patch.object(ppa, "swipe_points", side_effect=lambda _c, nm, *_a, **_kw: swipes_hint.append(nm) or True),
+            ):
+                hint_pt, hint_st = ppa._pan_and_find_room(
+                    _FakeCtx(),
+                    "Hint_",
+                    PRISON_RIGHT_WING_PAN_SWIPE,
+                    ("缝纫工具原料车间",),
+                )
+
+            self.assertEqual(hint_st, "ok")
+            self.assertIsNotNone(hint_pt)
+            self.assertEqual(swipes_hint, [])
+            self.assertEqual(taps_hint, [("Hint_HintUnzoomUnzoom", ROOM_UNZOOM_RIGHT_COL_POINT)])
+
+            # 4b. 连续 2 次拖拽后网格签名完全不变 -> 提前熔断返回 (None, "pan_stalled")
+            swipes_stall: list[str] = []
+            static_grid = [
+                {"text": "电力中心LV8", "box": [105, 161, 219, 37]},
+                {"text": "转运中心", "box": [337, 447, 143, 43]},
+                {"text": "整顿中心等级", "box": [276, 492, 200, 38]},
+            ]
+
+            def fake_ocr_stall(_ctx, _img, name, _roi):
+                if "Grid" in name:
+                    return static_grid
+                if "Top" in name:
+                    return normal_top
+                if "Dock" in name:
+                    return full_dock
+                return []
+
+            with (
+                mock.patch.object(ppa, "is_stopping", return_value=False),
+                mock.patch.object(ppa, "safe_screencap", return_value=frame),
+                mock.patch.object(ppa, "sleep_with_stop", return_value=True),
+                mock.patch.object(ppa, "ocr_roi", side_effect=fake_ocr_stall),
+                mock.patch.object(ppa, "tap_point", return_value=True),
+                mock.patch.object(ppa, "swipe_points", side_effect=lambda _c, nm, *_a, **_kw: swipes_stall.append(nm) or True),
+            ):
+                stall_pt, stall_st = ppa._pan_and_find_room(
+                    _FakeCtx(),
+                    "Stall_",
+                    PRISON_RIGHT_WING_PAN_SWIPE,
+                    ("缝纫工具原料车间",),
+                )
+
+            self.assertIsNone(stall_pt)
+            self.assertEqual(stall_st, "pan_stalled")
+            self.assertEqual(len(swipes_stall), 2)
+
 
 if __name__ == "__main__":
     unittest.main()

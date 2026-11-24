@@ -64,7 +64,7 @@ SHOP_MODAL_CONFIRM_POINT: tuple[int, int] = (957, 536)
 # 右翼房间缩放、建造升级（含电力中心严禁切换至安装电机页护栏）
 PRISON_RIGHT_WING_PAN_SWIPE: tuple[tuple[int, int], tuple[int, int]] = ((960, 520), (420, 180))
 PRISON_UPPER_WING_PAN_SWIPE: tuple[tuple[int, int], tuple[int, int]] = ((640, 220), (640, 560))
-ROOM_BUBBLE_ROI: tuple[int, int, int, int] = (690, 275, 210, 165)
+ROOM_BUBBLE_ROI: tuple[int, int, int, int] = (690, 210, 210, 230)
 ROOM_BUBBLE_TOP_FALLBACK: tuple[int, int] = (792, 319)
 ROOM_BUBBLE_BOTTOM_FALLBACK: tuple[int, int] = (792, 382)
 POWER_BUBBLE_BUILD_FALLBACK: tuple[int, int] = (793, 349)

@@ -67,6 +67,23 @@ PRISON_INTERIOR_TOP_EXCLUSIONS: tuple[str, ...] = (
     "一键全选",
 )
 
+PRISON_ZOOMED_ROOM_TOP_EXCLUSIONS: tuple[str, ...] = (
+    "可领取",
+    "可升级",
+    "可解锁",
+    "研发中心",
+    "电力中心",
+    "财务中心",
+    "转运中心",
+    "医务室",
+    "假释室",
+    "禁闭室",
+    "安保中心",
+    "餐厅",
+    "RCB-",
+    "RCA-",
+)
+
 PRISON_INTERIOR_DOCK_EXCLUSIONS: tuple[str, ...] = (
     "宿舍导航",
     "已解锁生活区域",
@@ -265,11 +282,45 @@ def _parse_fraction(text: str) -> Optional[tuple[int, int]]:
     return int(match.group(1)), int(match.group(2))
 
 
+def _has_prison_overview_dock(dock_entries: Sequence[Mapping[str, Any]]) -> bool:
+    """判定底栏 OCR 是否包含整顿中心总览 Dock 特征且不含左抽屉/房间内景干扰词。"""
+    dock_text = "".join(_clean_text(e.get("text")) for e in dock_entries if isinstance(e, Mapping))
+    if any(excl in dock_text for excl in LEFT_DRAWER_EXCLUSION_KEYWORDS):
+        return False
+    if any(excl in dock_text for excl in PRISON_INTERIOR_DOCK_EXCLUSIONS):
+        return False
+    # 左抽屉入口卡本身包含「整顿中心」，整顿中心底栏绝无此词
+    if "整顿中心" in dock_text:
+        return False
+    dock_hits = sum(1 for kw in PRISON_DOCK_KEYWORDS if kw in dock_text)
+    return dock_hits >= 2 and any(kw in dock_text for kw in PRISON_EXCLUSIVE_DOCK_KEYWORDS)
+
+
+def _has_prison_overview_top_bar(top_entries: Sequence[Mapping[str, Any]]) -> bool:
+    """判定顶栏 OCR 是否仍显示总览顶栏，而非房间放大聚焦态下的空顶栏或房间底角残片。"""
+    top_text = "".join(_clean_text(e.get("text")) for e in top_entries if isinstance(e, Mapping))
+    if not top_text:
+        return False
+    if any(excl in top_text for excl in LEFT_DRAWER_EXCLUSION_KEYWORDS):
+        return False
+    if any(excl in top_text for excl in PRISON_INTERIOR_TOP_EXCLUSIONS):
+        return False
+    if any(excl in top_text for excl in PRISON_ZOOMED_ROOM_TOP_EXCLUSIONS):
+        return False
+    if "帮助" in top_text:
+        return True
+    if any(kw in top_text for kw in ("整顿", "电力", "事项")):
+        return True
+    if re.search(r"LV\.?\s*\d+", top_text.upper()) is not None:
+        return True
+    return len(re.findall(r"\d+\s*/\s*\d+", top_text)) >= 2
+
+
 def is_prison_overview_entries(
     top_entries: Sequence[Mapping[str, Any]],
     dock_entries: Sequence[Mapping[str, Any]],
 ) -> bool:
-    """判定当前界面是否为整顿中心（监狱）总览界面，严防误判左抽屉或 3D 房间内景。"""
+    """判定当前界面是否为整顿中心（监狱）总览界面，严防误判左抽屉、3D 房间内景或房间放大聚焦态。"""
     dock_text = "".join(_clean_text(e.get("text")) for e in dock_entries if isinstance(e, Mapping))
     top_text = "".join(_clean_text(e.get("text")) for e in top_entries if isinstance(e, Mapping))
     all_text = f"{top_text}{dock_text}"
@@ -277,21 +328,36 @@ def is_prison_overview_entries(
         return False
     if any(excl in top_text for excl in PRISON_INTERIOR_TOP_EXCLUSIONS):
         return False
+    if any(excl in top_text for excl in PRISON_ZOOMED_ROOM_TOP_EXCLUSIONS):
+        return False
     if any(excl in dock_text for excl in PRISON_INTERIOR_DOCK_EXCLUSIONS):
         return False
     # 左抽屉入口卡本身包含「整顿中心」，整顿中心底栏绝无此词
     if "整顿中心" in dock_text:
         return False
 
-    dock_hits = sum(1 for kw in PRISON_DOCK_KEYWORDS if kw in dock_text)
-    if dock_hits >= 2 and any(kw in dock_text for kw in PRISON_EXCLUSIVE_DOCK_KEYWORDS):
+    if _has_prison_overview_dock(dock_entries) and _has_prison_overview_top_bar(top_entries):
         return True
+    dock_hits = sum(1 for kw in PRISON_DOCK_KEYWORDS if kw in dock_text)
     top_upper = top_text.upper()
     return (
         "LV" in top_upper
         and ("事项" in top_upper or "电力" in top_upper or "整顿" in top_upper)
         and (dock_hits >= 1 or not dock_text)
     )
+
+
+def is_prison_room_zoomed_entries(
+    top_entries: Sequence[Mapping[str, Any]],
+    dock_entries: Sequence[Mapping[str, Any]],
+) -> bool:
+    """判定当前界面是否处于整顿中心房间放大聚焦态（顶栏隐藏或变为上方房间残片，但底部 Dock 仍在）。"""
+    if is_prison_overview_entries(top_entries, dock_entries):
+        return False
+    top_text = "".join(_clean_text(e.get("text")) for e in top_entries if isinstance(e, Mapping))
+    if any(excl in top_text for excl in LEFT_DRAWER_EXCLUSION_KEYWORDS):
+        return False
+    return _has_prison_overview_dock(dock_entries)
 
 
 def find_dock_button_point(

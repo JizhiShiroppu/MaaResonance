@@ -25,6 +25,7 @@ from maa_resonance.logic.planning import (
     format_planning_report_html,
     is_orders_screen_entries,
     is_prison_overview_entries,
+    is_prison_room_zoomed_entries,
     is_warehouse_screen_entries,
     merge_prison_grid_scans,
     parse_cn_number,
@@ -456,6 +457,41 @@ class PrisonScannerLogicTests(unittest.TestCase):
         self.assertIn("冲锋衣", html_doc)
         self.assertIn("14,880", html_doc)
 
+    def test_live_20261124_overview_vs_zoomed_room_detection(self) -> None:
+        live_dock = [
+            {"box": [58, 665, 35, 19], "text": "仓库"},
+            {"box": [137, 664, 54, 21], "text": "订单站"},
+            {"box": [235, 664, 36, 19], "text": "采购"},
+            {"box": [308, 662, 158, 24], "text": "生活技能兑换商店"},
+            {"box": [496, 664, 53, 20], "text": "拼单单"},
+        ]
+        self.assertFalse(is_prison_overview_entries([], live_dock))
+        self.assertTrue(is_prison_room_zoomed_entries([], live_dock))
+
+        fragment_top = [{"box": [130, 48, 18, 12], "text": "12"}]
+        self.assertFalse(is_prison_overview_entries(fragment_top, live_dock))
+        self.assertTrue(is_prison_room_zoomed_entries(fragment_top, live_dock))
+
+        room_top_1 = [{"text": "缝纫工具原料车间LV2"}, {"text": "可领取"}]
+        room_top_2 = [{"text": "电力中心LV8"}]
+        self.assertFalse(is_prison_overview_entries(room_top_1, live_dock))
+        self.assertTrue(is_prison_room_zoomed_entries(room_top_1, live_dock))
+        self.assertFalse(is_prison_overview_entries(room_top_2, live_dock))
+        self.assertTrue(is_prison_room_zoomed_entries(room_top_2, live_dock))
+
+        normal_top = [
+            {"text": "っ員"},
+            {"text": "?"},
+            {"text": "帮助"},
+            {"text": "Lv8•"},
+            {"text": "40/90"},
+            {"text": "11/24"},
+            {"text": "4"},
+            {"text": "7200/16800"},
+        ]
+        self.assertTrue(is_prison_overview_entries(normal_top, live_dock))
+        self.assertFalse(is_prison_room_zoomed_entries(normal_top, live_dock))
+
 
 class PrisonPlanActionTests(unittest.TestCase):
     def test_action_in_prison_scans_readonly_and_preserves_existing_snapshot(self) -> None:
@@ -487,7 +523,7 @@ class PrisonPlanActionTests(unittest.TestCase):
                 tapped_points: list[tuple[str, tuple[int, int]]] = []
 
                 def fake_ocr(_ctx, _img, node_name: str, _roi):
-                    if node_name.endswith(("InitTop", "TopBar")) or "BackTop" in node_name:
+                    if node_name.endswith(("InitTop", "TopBar", "ShopPreTop", "OrdPreTop")) or "BackTop" in node_name:
                         return [
                             {"text": "整顿中心 LV7", "box": [370, 20, 120, 28]},
                             {"text": "0/80", "box": [410, 46, 70, 22]},

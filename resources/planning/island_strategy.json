@@ -1,0 +1,262 @@
+{
+  "meta": {
+    "version": 1,
+    "updated_at": "2026-11-24",
+    "sources": [
+      "bwiki_2024_09_and_2026_09",
+      "bwiki_patch_2025_04_09_and_2025_05_08",
+      "taptap_15_island_guide",
+      "live_mumu_uid_8820083699_2026_11_24"
+    ]
+  },
+  "graduation_targets": {
+    "unlocked_islands": 6,
+    "cabin_level": 6,
+    "stability_max": 200,
+    "avg_stay_days": 3.0,
+    "share_ratio_pct": 35.0,
+    "ticket_price": 2000,
+    "tax_rate_pct": 0.0,
+    "estimated_invest_coins_min": 13000000,
+    "estimated_invest_coins_max": 15000000,
+    "graduated_daily_coins_approx": 1000000
+  },
+  "stay_dimensions": [
+    {
+      "id": "comfort",
+      "name": "舒适",
+      "step_points": 6000,
+      "step_days": 0.1,
+      "max_bonus_days": 0.5,
+      "full_score_target": 30000,
+      "notes": "管理处/木屋/垃圾站/躺椅/鱼缸均提供大量舒适度；每 6000 点 +0.1 天。"
+    },
+    {
+      "id": "greenery",
+      "name": "绿植",
+      "step_points": 3000,
+      "step_days": 0.1,
+      "max_bonus_days": 0.5,
+      "full_score_target": 15000,
+      "notes": "养鱼大户流通常在岛屿后排种一排树凑满绿植。"
+    },
+    {
+      "id": "food",
+      "name": "美食",
+      "step_points": 3000,
+      "step_days": 0.1,
+      "max_bonus_days": 0.5,
+      "full_score_target": 15000,
+      "notes": "西瓜摊/冰淇淋摊/炒面摊/饮料摊提供美食评分。"
+    },
+    {
+      "id": "entertainment",
+      "name": "娱乐",
+      "step_points": 3000,
+      "step_days": 0.1,
+      "max_bonus_days": 0.5,
+      "full_score_target": 15000,
+      "notes": "排球场/秋千/露营/游乐摆设提供娱乐评分。"
+    },
+    {
+      "id": "medical",
+      "name": "医疗",
+      "step_points": 3000,
+      "step_days": 0.1,
+      "max_bonus_days": 0.5,
+      "full_score_target": 15000,
+      "notes": "卫生/医疗类海岛设施与摆设。"
+    },
+    {
+      "id": "pet",
+      "name": "宠物",
+      "step_points": 3000,
+      "step_days": 0.1,
+      "max_bonus_days": 0.5,
+      "full_score_target": 15000,
+      "notes": "好友互助还影响看守防偷概率，日常建议达标。"
+    },
+    {
+      "id": "aquarium",
+      "name": "水族",
+      "step_points": 3000,
+      "step_days": 0.1,
+      "max_bonus_days": 0.5,
+      "full_score_target": 15000,
+      "notes": "海岛管理处装修商店买专属水族箱 + 海角城水族馆每日买鱼，兼顾垃圾产率。"
+    }
+  ],
+  "stay_formula": {
+    "base_days": 1.0,
+    "max_bonus_days": 2.0,
+    "max_total_days": 3.0
+  },
+  "daily_limits": {
+    "daily_reset_hour": 5,
+    "friend_clean_daily_limit": 3,
+    "friend_help_daily_limit": 5,
+    "cleanliness_penalty_hours": 48,
+    "invasion_penalty_hours": 48,
+    "volleyball_daily_limit": 3,
+    "volleyball_win_coins": 50,
+    "volleyball_lose_coins": 20,
+    "investment_refresh_rule": "每次列车驶入海角城刷新 1 次投资次数（倒车不刷新）。"
+  },
+  "cabin_levels": [
+    {
+      "level": 1,
+      "comfort": 500,
+      "trash_per_hour": 5,
+      "upgrade_to_next_coins": 600000,
+      "upgrade_to_next_tickets": 6000,
+      "notes": "初始购买 500,000 币 + 5,000 资材券。"
+    },
+    {
+      "level": 2,
+      "comfort": 1100,
+      "trash_per_hour": 11,
+      "upgrade_to_next_coins": 700000,
+      "upgrade_to_next_tickets": 7000,
+      "notes": ""
+    },
+    {
+      "level": 3,
+      "comfort": 1800,
+      "trash_per_hour": 18,
+      "upgrade_to_next_coins": 800000,
+      "upgrade_to_next_tickets": 8000,
+      "notes": ""
+    },
+    {
+      "level": 4,
+      "comfort": 2600,
+      "trash_per_hour": 26,
+      "upgrade_to_next_coins": 900000,
+      "upgrade_to_next_tickets": 9000,
+      "notes": ""
+    },
+    {
+      "level": 5,
+      "comfort": 3500,
+      "trash_per_hour": 35,
+      "upgrade_to_next_coins": 1000000,
+      "upgrade_to_next_tickets": 10000,
+      "notes": ""
+    },
+    {
+      "level": 6,
+      "comfort": 4500,
+      "trash_per_hour": 45,
+      "upgrade_to_next_coins": 0,
+      "upgrade_to_next_tickets": 0,
+      "notes": "满级沙滩小屋。"
+    }
+  ],
+  "trash_station_warning": {
+    "max_level": 60,
+    "auto_collect_unlock_level": 11,
+    "estimated_total_coins": 300000000,
+    "high_cost_materials": [
+      "笃学灯芯×50 (LV50)",
+      "形而上粒子×60 (LV55)",
+      "劫掠锯轮×40 (LV45)",
+      "超导线圈×20 (LV35)",
+      "纯金零件×10 (LV30)"
+    ],
+    "recommended_stop_rule": "前期严禁把跑商/核心养成资金砸入垃圾站；最多按需随缘升至 LV11（解锁自动收取+3产线）或保持低级手动一键收取，1→60 级约 3 亿+ 币请等客运与整顿中心全毕业后再考虑。"
+  },
+  "patrol_stages": [
+    {
+      "stage": "SP-1",
+      "recommended_level": 30,
+      "clarity_cost": 20,
+      "shell_coins": 30,
+      "material_tickets": 600,
+      "reputation": 40,
+      "prisoners": 16,
+      "prison_note": "高囚犯数量但资材券较低"
+    },
+    {
+      "stage": "SP-4",
+      "recommended_level": 45,
+      "clarity_cost": 20,
+      "shell_coins": 30,
+      "material_tickets": 900,
+      "reputation": 40,
+      "prisoners": 15,
+      "prison_note": "监狱联动抓紫囚犯 + 刷资材券最优兼顾点"
+    },
+    {
+      "stage": "SP-6",
+      "recommended_level": 55,
+      "clarity_cost": 20,
+      "shell_coins": 30,
+      "material_tickets": 1200,
+      "reputation": 50,
+      "prisoners": 0,
+      "prison_note": "纯刷资材券/贝币高效率档"
+    },
+    {
+      "stage": "SP-7",
+      "recommended_level": 60,
+      "clarity_cost": 20,
+      "shell_coins": 30,
+      "material_tickets": 1200,
+      "reputation": 50,
+      "prisoners": 0,
+      "prison_note": "含深眠/远祖高阶突破素材"
+    },
+    {
+      "stage": "SP-8",
+      "recommended_level": 65,
+      "clarity_cost": 20,
+      "shell_coins": 30,
+      "material_tickets": 1200,
+      "reputation": 50,
+      "prisoners": 0,
+      "prison_note": "满级治安巡逻，含桦树核仁/冥霆素材"
+    }
+  ],
+  "shop_priorities": [
+    {
+      "item": "喧闹摇滚",
+      "currency": "贝币",
+      "unit_cost": 1000,
+      "limit": 1,
+      "tier": "must_buy",
+      "notes": "毕业级 SSR 声呐武装，最优先兑换。"
+    },
+    {
+      "item": "祖父反应装甲",
+      "currency": "贝币/海岛兑换",
+      "unit_cost": 0,
+      "limit": 1,
+      "tier": "must_buy",
+      "notes": "2025-05-08 新增常驻 UR 护甲，必换。"
+    },
+    {
+      "item": "拉普拉斯协议",
+      "currency": "贝币 / 排球奖币",
+      "unit_cost": 200,
+      "limit": 10,
+      "tier": "must_buy",
+      "notes": "贝币池 5 抽 + 排球奖币池 5 抽。"
+    },
+    {
+      "item": "自观测胶卷",
+      "currency": "贝币 / 排球奖币 / 铁盟币",
+      "unit_cost": 60,
+      "limit": 30,
+      "tier": "high",
+      "notes": "高价值洗词条道具。"
+    },
+    {
+      "item": "进货采买书",
+      "currency": "贝币",
+      "unit_cost": 30,
+      "limit": 20,
+      "tier": "high",
+      "notes": "跑商核心耗材，建议搬空。"
+    }
+  ]
+}

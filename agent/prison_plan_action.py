@@ -159,6 +159,7 @@ from maa_resonance.logic.planning import (
     is_orders_foyer_entries,
     is_orders_screen_entries,
     is_prison_overview_entries,
+    is_prison_room_zoomed_entries,
     is_warehouse_screen_entries,
     load_account_snapshot,
     merge_prison_grid_scans,
@@ -311,11 +312,38 @@ def _find_drawer_prison_point_with_scroll(
     return None
 
 
-def _is_on_prison_overview(context: Context, frame: Any, prefix: str) -> bool:
-    """复用顶栏与底栏 OCR 判定当前画面是否仍位于整顿中心总览。"""
+def _overview_state(context: Context, frame: Any, prefix: str) -> tuple[bool, bool]:
+    """复用顶栏与底栏 OCR 判定当前画面状态，返回 (is_overview, is_room_zoomed)。"""
     top = ocr_roi(context, frame, f"{prefix}Top", PRISON_TOP_BAR_ROI)
     dock = ocr_roi(context, frame, f"{prefix}Dock", PRISON_BOTTOM_DOCK_ROI)
-    return is_prison_overview_entries(top, dock)
+    return is_prison_overview_entries(top, dock), is_prison_room_zoomed_entries(top, dock)
+
+
+def _is_on_prison_overview(context: Context, frame: Any, prefix: str) -> bool:
+    """复用顶栏与底栏 OCR 判定当前画面是否仍位于整顿中心总览。"""
+    is_ov, _ = _overview_state(context, frame, prefix)
+    return is_ov
+
+
+def _unzoom_room_to_overview(
+    context: Context,
+    prefix: str,
+    unzoom_point: tuple[int, int] = ROOM_UNZOOM_RIGHT_COL_POINT,
+) -> bool:
+    """从房间放大聚焦态点击空白处退回正常总览，绝不盲点左上角返回按钮。"""
+    alt_pt = ROOM_UNZOOM_RIGHT_COL_POINT if unzoom_point == ROOM_UNZOOM_LEFT_COL_POINT else ROOM_UNZOOM_LEFT_COL_POINT
+    for tap_name, chk_name, pt in (
+        (f"{prefix}Unzoom", f"{prefix}Chk2", unzoom_point),
+        (f"{prefix}UnzoomAlt", f"{prefix}Chk3", alt_pt),
+    ):
+        if not tap_point(context, tap_name, pt):
+            return False
+        if not sleep_with_stop(context, 1.05):
+            return False
+        frame = safe_screencap(context)
+        if frame is not None and _is_on_prison_overview(context, frame, chk_name):
+            return True
+    return False
 
 
 def _navigate_lobby_to_prison(context: Context, prefix: str) -> tuple[bool, str, dict[str, int], str]:
@@ -412,19 +440,21 @@ def _navigate_lobby_to_prison(context: Context, prefix: str) -> tuple[bool, str,
 
 
 def _back_to_prison_overview(context: Context, prefix: str) -> bool:
-    """从仓库/订单等子界面点返回按钮并等待回到整顿中心总览（兼容双跳门面页）。"""
+    """从仓库/订单等子界面点返回按钮并等待回到整顿中心总览（兼容双跳门面页与房间放大态退回）。"""
     for attempt in range(3):
         if not tap_point(context, f"{prefix}Back{attempt}", PRISON_BACK_POINT):
             return False
 
-        def _check_overview(frame: Any, idx: int) -> bool | None:
+        def _check_overview(frame: Any, idx: int) -> str | None:
             top = ocr_roi(context, frame, f"{prefix}BackTop{attempt}_{idx}", PRISON_TOP_BAR_ROI)
             dock = ocr_roi(context, frame, f"{prefix}BackDock{attempt}_{idx}", PRISON_BOTTOM_DOCK_ROI)
             if is_prison_overview_entries(top, dock):
-                return True
+                return "overview"
+            if is_prison_room_zoomed_entries(top, dock):
+                return "zoomed"
             return None
 
-        _, ok, aborted = poll_screen(
+        _, state_kind, aborted = poll_screen(
             context,
             _check_overview,
             initial_delay=1.25,
@@ -435,17 +465,25 @@ def _back_to_prison_overview(context: Context, prefix: str) -> bool:
         )
         if aborted:
             return False
-        if ok:
+        if state_kind == "overview":
             return True
+        if state_kind == "zoomed":
+            if _unzoom_room_to_overview(context, f"{prefix}ZoomExit{attempt}", ROOM_UNZOOM_RIGHT_COL_POINT):
+                return True
+            if is_stopping(context):
+                return False
     return False
 
 
 def _ensure_on_prison_overview(context: Context, prefix: str) -> bool:
-    """确保当前已停在整顿中心总览：已在总览则 0 点击直接放行，否则尝试返回总览。"""
+    """确保当前已停在整顿中心总览：已在总览直接放行，处于房间放大态先点空白解除，否则尝试返回总览。"""
     frame = safe_screencap(context)
     if frame is None:
         return False
-    if _is_on_prison_overview(context, frame, f"{prefix}OvChk"):
+    is_ov, is_zoomed = _overview_state(context, frame, f"{prefix}OvChk")
+    if is_ov:
+        return True
+    if is_zoomed and _unzoom_room_to_overview(context, f"{prefix}OvUnzoom", ROOM_UNZOOM_RIGHT_COL_POINT):
         return True
     return _back_to_prison_overview(context, f"{prefix}OvBack")
 
@@ -896,6 +934,35 @@ def _has_upgradable_badge_near(
     return False
 
 
+def _overview_grid_signature(entries: Sequence[dict[str, Any]]) -> tuple[tuple[str, int, int], ...]:
+    """提取网格 OCR 归一化位置签名，用于检测拖拽是否完全卡滞（排除单字噪点）。"""
+    sig: set[tuple[str, int, int]] = set()
+    for entry in _merge_horizontal_adjacent(entries, max_gap_x=24, max_row_diff=14.0):
+        text = _clean_text(entry.get("text"))
+        if len(text) < 2:
+            continue
+        center = _entry_center(entry)
+        if center is None:
+            continue
+        sig.add((text, round(center[0] / 24), round(center[1] / 24)))
+    return tuple(sorted(sig))
+
+
+def _has_zoomed_bubble_hint(entries: Sequence[dict[str, Any]]) -> bool:
+    """检查网格 OCR 是否出现房间放大态右侧浮出的「建设/生产/详情」气泡词。"""
+    merged = _merge_horizontal_adjacent(entries, max_gap_x=14, max_row_diff=12.0)
+    for entry in list(entries) + merged:
+        if not isinstance(entry, dict):
+            continue
+        text = _clean_text(entry.get("text"))
+        if text not in ("建设", "生产", "详情"):
+            continue
+        center = _entry_center(entry)
+        if center is not None and 680 <= center[0] <= 910 and 190 <= center[1] <= 445:
+            return True
+    return False
+
+
 def _pan_and_find_room(
     context: Context,
     prefix: str,
@@ -911,6 +978,20 @@ def _pan_and_find_room(
     pt, status = _find_room_in_overview_grid(cur_entries, aliases, allow_unlockable=allow_unlockable)
     if pt is not None or status == "locked":
         return pt, status
+
+    if _has_zoomed_bubble_hint(cur_entries):
+        _is_ov, is_zoomed = _overview_state(context, cur_img, f"{prefix}ZoomHint")
+        if is_stopping(context):
+            return None, "stopped"
+        if is_zoomed and _unzoom_room_to_overview(context, f"{prefix}HintUnzoom", ROOM_UNZOOM_RIGHT_COL_POINT):
+            unzoom_img = safe_screencap(context)
+            if unzoom_img is None:
+                return None, "stopped"
+            cur_img = unzoom_img
+            cur_entries = ocr_roi(context, cur_img, f"{prefix}GridUnzoom", PRISON_OVERVIEW_GRID_ROI)
+            pt, status = _find_room_in_overview_grid(cur_entries, aliases, allow_unlockable=allow_unlockable)
+            if pt is not None or status == "locked":
+                return pt, status
 
     edge_nudges: dict[str, tuple[tuple[int, int], tuple[int, int]]] = {
         "edge_clipped_bottom": PRISON_RIGHT_WING_PAN_SWIPE,
@@ -933,6 +1014,10 @@ def _pan_and_find_room(
             swipes.append(pair)
 
     last_status = status
+    prev_sig = _overview_grid_signature(cur_entries)
+    unzoom_recovered = False
+    stalled_swipes = 0
+
     for swipe_idx, (start_pt, end_pt) in enumerate(swipes):
         pan_name = f"{prefix}Pan" if swipe_idx == 0 else f"{prefix}PanRec{swipe_idx}"
         grid_name = f"{prefix}Grid" if swipe_idx == 0 else f"{prefix}GridRec{swipe_idx}"
@@ -954,6 +1039,40 @@ def _pan_and_find_room(
         pt, last_status = _find_room_in_overview_grid(entries, aliases, allow_unlockable=allow_unlockable)
         if pt is not None or last_status == "locked":
             return pt, last_status
+
+        next_sig = _overview_grid_signature(entries)
+        if prev_sig and next_sig and next_sig == prev_sig:
+            if not unzoom_recovered:
+                unzoom_recovered = True
+                _ov, is_zoomed = _overview_state(context, img, f"{prefix}StallChk{swipe_idx}")
+                if is_stopping(context):
+                    return None, "stopped"
+                if is_zoomed and _unzoom_room_to_overview(
+                    context,
+                    f"{prefix}StallUnzoom{swipe_idx}",
+                    ROOM_UNZOOM_RIGHT_COL_POINT,
+                ):
+                    rec_img = safe_screencap(context)
+                    if rec_img is None:
+                        return None, "stopped"
+                    rec_entries = ocr_roi(context, rec_img, f"{prefix}GridStallRec{swipe_idx}", PRISON_OVERVIEW_GRID_ROI)
+                    rec_pt, rec_status = _find_room_in_overview_grid(
+                        rec_entries,
+                        aliases,
+                        allow_unlockable=allow_unlockable,
+                    )
+                    if rec_pt is not None or rec_status == "locked":
+                        return rec_pt, rec_status
+                    last_status = rec_status
+                    prev_sig = _overview_grid_signature(rec_entries)
+                    stalled_swipes = 0
+                    continue
+            stalled_swipes += 1
+            if stalled_swipes >= 2:
+                return None, "pan_stalled"
+        elif next_sig:
+            stalled_swipes = 0
+            prev_sig = next_sig
     return None, last_status
 
 
@@ -973,17 +1092,10 @@ def _exit_zoomed_panel_to_overview(
     if _is_on_prison_overview(context, frame, f"{prefix}Chk1"):
         return True
 
-    if not tap_point(context, f"{prefix}Unzoom", unzoom_point):
-        return False
-    if not sleep_with_stop(context, 1.1):
-        return False
-    frame2 = safe_screencap(context)
-    if frame2 is not None and _is_on_prison_overview(context, frame2, f"{prefix}Chk2"):
+    if _unzoom_room_to_overview(context, prefix, unzoom_point):
         return True
-
-    alt_pt = ROOM_UNZOOM_RIGHT_COL_POINT if unzoom_point == ROOM_UNZOOM_LEFT_COL_POINT else ROOM_UNZOOM_LEFT_COL_POINT
-    tap_point(context, f"{prefix}UnzoomAlt", alt_pt)
-    sleep_with_stop(context, 1.0)
+    if is_stopping(context):
+        return False
     return _back_to_prison_overview(context, f"{prefix}FallbackBack")
 
 
@@ -1517,6 +1629,7 @@ def _exec_upgrade_core_buildings(
             return
 
         need_exit_zoom = True
+        entered_build_panel = False
         latest_after_img: Any = None
         max_rounds = max(1, int(state.core_upgrade_cap))
 
@@ -1597,6 +1710,7 @@ def _exec_upgrade_core_buildings(
 
             if not tap_point(context, f"{prefix}TapBuildBubble_{bid}{round_suffix}", build_bubble_pt):
                 break
+            entered_build_panel = True
 
             def _check_build_panel(frame: Any, poll_idx: int) -> bool | None:
                 entries = ocr_roi(context, frame, f"{prefix}BuildPanel_{bid}{round_suffix}_{poll_idx}", ROOM_BUILD_PANEL_ROI)
@@ -1709,7 +1823,10 @@ def _exec_upgrade_core_buildings(
                 break
 
         if need_exit_zoom and not is_stopping(context):
-            _exit_zoomed_panel_to_overview(context, f"{prefix}Done_{bid}", unzoom_pt)
+            if entered_build_panel:
+                _exit_zoomed_panel_to_overview(context, f"{prefix}Done_{bid}", unzoom_pt)
+            else:
+                _unzoom_room_to_overview(context, f"{prefix}Done_{bid}", unzoom_pt)
 
     for bid, label, aliases, unzoom_pt in core_candidates:
         if is_stopping(context):
@@ -2267,8 +2384,11 @@ def _exec_predeposit_raw_workshops(
         if bid not in built_raw_ids:
             continue
 
-        room_pt, _ = _pan_and_find_room(context, f"{prefix}Pre_{bid}", PRISON_RIGHT_WING_PAN_SWIPE, aliases)
+        room_pt, locate_status = _pan_and_find_room(context, f"{prefix}Pre_{bid}", PRISON_RIGHT_WING_PAN_SWIPE, aliases)
         if room_pt is None:
+            if locate_status == "pan_stalled" and not _ensure_on_prison_overview(context, f"{prefix}PreStall_{bid}"):
+                state.add_skipped("do", "raw_predeposit", label, "整顿中心画面拖拽无响应，已中止后续车间搜索。")
+                break
             continue
         if not tap_point(context, f"{prefix}TapPreRoom_{bid}", room_pt):
             break
@@ -2295,7 +2415,7 @@ def _exec_predeposit_raw_workshops(
         prod_pt = find_room_bubble_point(bubble_entries, "生产", ROOM_BUBBLE_TOP_FALLBACK)
         if prod_pt is None:
             if not _is_on_prison_overview(context, bubble_img, f"{prefix}PreUnzoomChk_{bid}"):
-                _exit_zoomed_panel_to_overview(context, f"{prefix}PreUnzoom_{bid}", unzoom_pt)
+                _unzoom_room_to_overview(context, f"{prefix}PreUnzoom_{bid}", unzoom_pt)
             continue
 
         if not tap_point(context, f"{prefix}TapPreProd_{bid}", prod_pt):
@@ -2543,6 +2663,9 @@ def _exec_start_workshop_production(
             break
         ws_pt, status = _pan_and_find_room(context, f"{prefix}Ws_{ws_label}", PRISON_UPPER_WING_PAN_SWIPE, aliases)
         if ws_pt is None:
+            if status == "pan_stalled" and not _ensure_on_prison_overview(context, f"{prefix}WsStall_{ws_label}"):
+                state.add_skipped("do", "produce_good", ws_label, "整顿中心画面拖拽无响应，已中止后续车间搜索。")
+                break
             if ws_label == "1号生产车间":
                 state.add_skipped("do", "produce_good", ws_label, f"上翼未检测到可用「{ws_label}」（{status}）。")
             continue
@@ -3314,6 +3437,11 @@ class PrisonPlanScanAction(CustomAction):
         entered_from_lobby = False
         uid = "unknown"
         drawer_wallet: dict[str, int] = {}
+
+        if not in_prison and is_prison_room_zoomed_entries(top_entries, dock_entries):
+            if _unzoom_room_to_overview(context, f"{prefix}InitUnzoom", ROOM_UNZOOM_RIGHT_COL_POINT):
+                in_prison = True
+                diag.record("entry", "unzoomed_from_room", "启动时处于房间放大聚焦态，已自动点击空白处退回总览")
 
         if in_prison:
             _acc_path, acc_data = find_account_config()

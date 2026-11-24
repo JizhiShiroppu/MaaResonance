@@ -367,13 +367,14 @@ def prune_old_diagnostic_files(
     output_dir: Path,
     *,
     max_keep: int = DEFAULT_MAX_DIAG_FILES,
+    patterns: Sequence[str] = ("prison_run_*.log", "prison_issue_*.zip"),
 ) -> int:
     """按文件名时间倒序清理超出保留数量的旧日志与 Issue 压缩包。"""
     if not output_dir.exists() or not output_dir.is_dir():
         return 0
     keep = max(0, int(max_keep))
     removed = 0
-    for pattern in ("prison_run_*.log", "prison_issue_*.zip"):
+    for pattern in patterns:
         matched = sorted(
             (p for p in output_dir.glob(pattern) if p.is_file()),
             key=lambda p: p.name,

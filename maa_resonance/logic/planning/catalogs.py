@@ -13,7 +13,11 @@ def _resolve_planning_dir(resources_dir: Optional[Path] = None) -> Path:
     if resources_dir is None:
         return PLANNING_RESOURCES_PATH
     base = Path(resources_dir)
-    if (base / "prison_strategy.json").exists() or (base / "growth_stages.json").exists():
+    if (
+        (base / "prison_strategy.json").exists()
+        or (base / "growth_stages.json").exists()
+        or (base / "island_strategy.json").exists()
+    ):
         return base
     return base / "planning"
 
@@ -23,6 +27,14 @@ def load_prison_strategy_catalog(resources_dir: Optional[Path] = None) -> dict[s
     """加载整顿中心策略与静态数值目录。"""
     planning_dir = _resolve_planning_dir(resources_dir)
     data = read_json(planning_dir / "prison_strategy.json", {})
+    return data if isinstance(data, dict) else {}
+
+
+@lru_cache(maxsize=4)
+def load_island_strategy_catalog(resources_dir: Optional[Path] = None) -> dict[str, Any]:
+    """加载海岛（蜃息岛）策略与静态数值目录。"""
+    planning_dir = _resolve_planning_dir(resources_dir)
+    data = read_json(planning_dir / "island_strategy.json", {})
     return data if isinstance(data, dict) else {}
 
 
@@ -45,6 +57,7 @@ def load_prison_wiki_catalog(resources_dir: Optional[Path] = None) -> dict[str, 
 def clear_catalog_caches() -> None:
     """清空静态规划目录缓存（主要用于单元测试隔离）。"""
     load_prison_strategy_catalog.cache_clear()
+    load_island_strategy_catalog.cache_clear()
     load_growth_stages_catalog.cache_clear()
     load_prison_wiki_catalog.cache_clear()
 

@@ -343,6 +343,17 @@
                     }
                 },
                 {
+                    "name": "IslandPlanScan",
+                    "enabled": false,
+                    "option": {
+                        "IslandPlanExecMode": "ExecuteSafeAuto",
+                        "IslandPlanAutoScope": "DailyFast",
+                        "IslandPlanReserveCoins": "Reserve15M",
+                        "IslandPlanAutoOpenReport": "No",
+                        "IslandPlanDebugExport": "LogAndBundle"
+                    }
+                },
+                {
                     "name": "AutoTwoCityBusiness",
                     "enabled": false,
                     "option": {
@@ -468,6 +479,17 @@
             "task": [
                 {
                     "name": "PrisonPlanScan",
+                    "enabled": true
+                }
+            ]
+        },
+        {
+            "name": "island-plan-scan",
+            "label": "海岛（蜃息岛）自动（实验型）",
+            "description": "海岛（蜃息岛）专属自动管家（支持活动中心经营活动远程直达，亦可并入一键自动日常）：先读取海岛经营报表 7 维评分、3天逗留进度、稳定指数与营运投资状况，再按执行模式与细粒度开关安全执行营运收钱、垃圾站右侧【一键收取】、0体力清理红感叹号入侵野怪、事项一览领奖（禁点追踪）与好友清扫/点赞/助战，输出离线 HTML 看板与 config/planning/logs/ 脱敏排错包。",
+            "task": [
+                {
+                    "name": "IslandPlanScan",
                     "enabled": true
                 }
             ]
@@ -621,6 +643,7 @@
         "resource/tasks/DailyClaim.json",
         "resource/tasks/DailyRoutine.json",
         "resource/tasks/PrisonPlanScan.json",
+        "resource/tasks/IslandPlanScan.json",
         "resource/tasks/ManualTwoCityBusiness.json",
         "resource/tasks/AutoTwoCityBusiness.json",
         "resource/tasks/SecurityAgency.json",

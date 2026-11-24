@@ -1,0 +1,537 @@
+{
+    "task": [
+        {
+            "name": "IslandPlanScan",
+            "label": "海岛（蜃息岛）自动（实验型）",
+            "entry": "IslandPlanStart",
+            "description": "海岛（蜃息岛）自动管家（支持通过「活动 -> 经营活动 -> 海岛物语」远程进入，也可接入一键自动日常）：先读取海岛经营报表 7 维评分/3天逗留进度/稳定指数/垃圾站与营运投资状况，再按执行模式与 7 项开关安全执行营运收钱、海岛垃圾站右侧【一键收取】（硬防误点一键处理）、0体力清红感叹号入侵野怪、事项一览领奖（禁点追踪）以及好友海岛清扫/点赞/治安蹭怪，同时输出离线 HTML 看板与脱敏排错压缩包至 config/planning/logs/。",
+            "group": [
+                "daily",
+                "account"
+            ],
+            "resource": [
+                "official"
+            ],
+            "controller": [
+                "ADB",
+                "Win32",
+                "Win32BackgroundWindowPos",
+                "Win32BackgroundCursorPos"
+            ],
+            "option": [
+                "IslandPlanExecMode",
+                "IslandPlanReserveCoins",
+                "IslandPlanAutoOpenReport",
+                "IslandPlanDebugExport"
+            ]
+        }
+    ],
+    "option": {
+        "IslandPlanExecMode": {
+            "type": "select",
+            "label": "执行模式",
+            "description": "默认自动执行零风险海岛日常（收钱、收垃圾、领奖励、好友偷垃圾及可选0体力打怪）；可随时切回「仅只读扫描与规划」（零点击消费），垃圾站升级大坑始终硬屏蔽。",
+            "default_case": "ExecuteSafeAuto",
+            "cases": [
+                {
+                    "name": "ExecuteSafeAuto",
+                    "label": "自动执行安全项（零消耗收菜 + 护栏保护，推荐）",
+                    "option": [
+                        "IslandPlanAutoScope",
+                        "IslandPlanOwnMonsterCap",
+                        "IslandPlanFriendCleanCap",
+                        "IslandPlanFriendHelpCap"
+                    ],
+                    "pipeline_override": {
+                        "IslandPlanOptExecMode": {
+                            "attach": {
+                                "exec_mode": "execute_safe_auto"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "PlanOnly",
+                    "label": "仅只读扫描与规划（零点击消费）",
+                    "pipeline_override": {
+                        "IslandPlanOptExecMode": {
+                            "attach": {
+                                "exec_mode": "plan_only"
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "IslandPlanAutoScope": {
+            "type": "select",
+            "label": "自动执行范围",
+            "description": "当执行模式为「自动执行安全项」时生效；已毕业或只想快速挂机推荐「极速零战斗日常」，想顺手推 200 波野怪选「全项安全托管」。",
+            "default_case": "DailyFast",
+            "cases": [
+                {
+                    "name": "DailyFast",
+                    "label": "极速零战斗日常（收钱 + 收垃圾 + 领奖 + 好友清扫点赞，推荐）",
+                    "pipeline_override": {
+                        "IslandPlanOptAutoScope": {
+                            "attach": {
+                                "auto_scope": "daily_fast",
+                                "modules_ui_configured": false
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "FullSafe",
+                    "label": "全项安全托管（含 0 体力打自家怪与好友治安蹭怪）",
+                    "pipeline_override": {
+                        "IslandPlanOptAutoScope": {
+                            "attach": {
+                                "auto_scope": "full_safe",
+                                "modules_ui_configured": false
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "OwnIslandOnly",
+                    "label": "仅自家海岛（收钱 + 收垃圾 + 0体力清怪 + 领奖）",
+                    "pipeline_override": {
+                        "IslandPlanOptAutoScope": {
+                            "attach": {
+                                "auto_scope": "own_island_only",
+                                "modules_ui_configured": false
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Custom",
+                    "label": "自定义勾选子模块（展开下方 9 项精细开关，含可选投资/扩建）",
+                    "option": [
+                        "IslandPlanEnabledModules"
+                    ],
+                    "pipeline_override": {
+                        "IslandPlanOptAutoScope": {
+                            "attach": {
+                                "auto_scope": "custom",
+                                "modules_ui_configured": true
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "IslandPlanEnabledModules": {
+            "type": "checkbox",
+            "label": "精细子模块启用清单（仅自定义范围时生效）",
+            "description": "前 7 项均为零消耗或 0 体力操作（右侧一键收取、事项一览禁点追踪均带硬护栏）；后 2 项（运营投资/海岛扩建）默认关闭，仅可在自定义模式按需勾选，严格受留存底线与零桦石硬护栏保护。",
+            "default_case": [
+                "mod_claim_revenue",
+                "mod_collect_trash",
+                "mod_claim_todo",
+                "mod_friend_clean_trash",
+                "mod_friend_like"
+            ],
+            "cases": [
+                {
+                    "name": "mod_claim_revenue",
+                    "label": "管理中心营运收益自动收钱",
+                    "pipeline_override": {
+                        "IslandPlanOptEnabledModules": {
+                            "attach": {
+                                "mod_pick_claim_revenue": true
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "mod_collect_trash",
+                    "label": "海岛垃圾站右侧【一键收取】（硬防误点一键处理）",
+                    "pipeline_override": {
+                        "IslandPlanOptEnabledModules": {
+                            "attach": {
+                                "mod_pick_collect_trash": true
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "mod_clear_own_monsters",
+                    "label": "0 体力清理自家红感叹号入侵野怪",
+                    "pipeline_override": {
+                        "IslandPlanOptEnabledModules": {
+                            "attach": {
+                                "mod_pick_clear_own_monsters": true
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "mod_claim_todo",
+                    "label": "事项一览已完成任务自动领奖（禁点追踪）",
+                    "pipeline_override": {
+                        "IslandPlanOptEnabledModules": {
+                            "attach": {
+                                "mod_pick_claim_todo": true
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "mod_friend_clean_trash",
+                    "label": "好友海岛清扫偷垃圾（每日上限 3 次）",
+                    "pipeline_override": {
+                        "IslandPlanOptEnabledModules": {
+                            "attach": {
+                                "mod_pick_friend_clean_trash": true
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "mod_friend_like",
+                    "label": "好友海岛顺手点赞",
+                    "pipeline_override": {
+                        "IslandPlanOptEnabledModules": {
+                            "attach": {
+                                "mod_pick_friend_like": true
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "mod_friend_help_monsters",
+                    "label": "好友海岛治安 0 体力蹭怪助战",
+                    "pipeline_override": {
+                        "IslandPlanOptEnabledModules": {
+                            "attach": {
+                                "mod_pick_friend_help_monsters": true
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "mod_auto_invest",
+                    "label": "海角城运营自动投资（仅花超底线铁盟币，分成>票价>减税，默认关）",
+                    "pipeline_override": {
+                        "IslandPlanOptEnabledModules": {
+                            "attach": {
+                                "mod_pick_auto_invest": true
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "mod_auto_expand",
+                    "label": "海岛自动扩建下一片区域（需达等级+超底线+券够，单趟最多1次，默认关）",
+                    "pipeline_override": {
+                        "IslandPlanOptEnabledModules": {
+                            "attach": {
+                                "mod_pick_auto_expand": true
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "IslandPlanOwnMonsterCap": {
+            "type": "select",
+            "label": "单趟自家清怪上限（仅开启自家打怪时生效）",
+            "description": "海岛野怪全部为 0 澄明度消耗，推满 200 波后永久停刷；设置单趟场数上限以控制日常运行时长。",
+            "default_case": "Fight5",
+            "cases": [
+                {
+                    "name": "Fight3",
+                    "label": "最多清理 3 只",
+                    "pipeline_override": {
+                        "IslandPlanOptOwnMonsterCap": {
+                            "attach": {
+                                "max_own_monster_fights": 3
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Fight5",
+                    "label": "最多清理 5 只（推荐）",
+                    "pipeline_override": {
+                        "IslandPlanOptOwnMonsterCap": {
+                            "attach": {
+                                "max_own_monster_fights": 5
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Fight11",
+                    "label": "最多清理 11 只（一轮清完当前满屏）",
+                    "pipeline_override": {
+                        "IslandPlanOptOwnMonsterCap": {
+                            "attach": {
+                                "max_own_monster_fights": 11
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Fight0",
+                    "label": "0 只（跳过战斗）",
+                    "pipeline_override": {
+                        "IslandPlanOptOwnMonsterCap": {
+                            "attach": {
+                                "max_own_monster_fights": 0
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "IslandPlanFriendCleanCap": {
+            "type": "select",
+            "label": "好友海岛清扫偷垃圾目标次数",
+            "description": "2025.04.09 更新后每日上限 3 次（05:00 刷新），清扫垃圾块直入火车暂存区。",
+            "default_case": "Clean3",
+            "cases": [
+                {
+                    "name": "Clean3",
+                    "label": "每日 3 次（打满上限，推荐）",
+                    "pipeline_override": {
+                        "IslandPlanOptFriendCleanCap": {
+                            "attach": {
+                                "max_friend_clean_count": 3,
+                                "max_friend_visits": 6
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Clean1",
+                    "label": "最多 1 次",
+                    "pipeline_override": {
+                        "IslandPlanOptFriendCleanCap": {
+                            "attach": {
+                                "max_friend_clean_count": 1,
+                                "max_friend_visits": 3
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Clean0",
+                    "label": "0 次（跳过清扫）",
+                    "pipeline_override": {
+                        "IslandPlanOptFriendCleanCap": {
+                            "attach": {
+                                "max_friend_clean_count": 0,
+                                "max_friend_visits": 3
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "IslandPlanFriendHelpCap": {
+            "type": "select",
+            "label": "好友海岛治安助战上限（仅开启治安助战时生效）",
+            "description": "帮好友驱逐入侵生物同样 0 体力并可获得 50% 奖励；每天最多 5 次。",
+            "default_case": "Help3",
+            "cases": [
+                {
+                    "name": "Help3",
+                    "label": "最多助战 3 次（推荐）",
+                    "pipeline_override": {
+                        "IslandPlanOptFriendHelpCap": {
+                            "attach": {
+                                "max_friend_help_fights": 3
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Help5",
+                    "label": "最多助战 5 次（打满每日上限）",
+                    "pipeline_override": {
+                        "IslandPlanOptFriendHelpCap": {
+                            "attach": {
+                                "max_friend_help_fights": 5
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Help0",
+                    "label": "0 次（不助战）",
+                    "pipeline_override": {
+                        "IslandPlanOptFriendHelpCap": {
+                            "attach": {
+                                "max_friend_help_fights": 0
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "IslandPlanReserveCoins": {
+            "type": "select",
+            "label": "铁盟币保留底线（用于规划预算参考）",
+            "description": "供规划看板评估海岛扩建/投资可支配余额。",
+            "default_case": "Reserve15M",
+            "cases": [
+                {
+                    "name": "Reserve0",
+                    "label": "0 币（不预留）",
+                    "pipeline_override": {
+                        "IslandPlanOptReserveCoins": {
+                            "attach": {
+                                "reserve_coins": 0,
+                                "use_custom_reserve_coins": false
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Reserve15M",
+                    "label": "保留 1,500 万铁盟币（默认推荐）",
+                    "pipeline_override": {
+                        "IslandPlanOptReserveCoins": {
+                            "attach": {
+                                "reserve_coins": 15000000,
+                                "use_custom_reserve_coins": false
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Reserve30M",
+                    "label": "保留 3,000 万铁盟币",
+                    "pipeline_override": {
+                        "IslandPlanOptReserveCoins": {
+                            "attach": {
+                                "reserve_coins": 30000000,
+                                "use_custom_reserve_coins": false
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Custom",
+                    "label": "自定义保留金额",
+                    "option": [
+                        "IslandPlanCustomReserveCoins"
+                    ],
+                    "pipeline_override": {
+                        "IslandPlanOptReserveCoins": {
+                            "attach": {
+                                "reserve_coins": 15000000,
+                                "use_custom_reserve_coins": true
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "IslandPlanCustomReserveCoins": {
+            "type": "input",
+            "label": "自定义铁盟币保留底线（整数）",
+            "description": "输入非负整数金额。",
+            "inputs": [
+                {
+                    "name": "custom_reserve_coins",
+                    "label": "保留下限",
+                    "default": "20000000",
+                    "pipeline_type": "int",
+                    "verify": "^(0|[1-9]\\d*)$",
+                    "pattern_msg": "请输入大于等于 0 的非负整数。"
+                }
+            ],
+            "pipeline_override": {
+                "IslandPlanOptCustomReserveCoins": {
+                    "attach": {
+                        "custom_reserve_coins": "{custom_reserve_coins}"
+                    }
+                }
+            }
+        },
+        "IslandPlanAutoOpenReport": {
+            "type": "switch",
+            "label": "完成后自动在浏览器打开海岛看板",
+            "description": "开启后在运行结束时打开离线 HTML 看板；在一键日常中默认关闭。",
+            "default_case": "Yes",
+            "cases": [
+                {
+                    "name": "Yes",
+                    "pipeline_override": {
+                        "IslandPlanOptAutoOpenReport": {
+                            "attach": {
+                                "auto_open_report": true
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "No",
+                    "pipeline_override": {
+                        "IslandPlanOptAutoOpenReport": {
+                            "attach": {
+                                "auto_open_report": false
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "IslandPlanDebugExport": {
+            "type": "select",
+            "label": "专项排错日志与 Issue 压缩包导出",
+            "description": "自动输出脱敏后的专项日志、JSON 状态与 Issue 模版至 config/planning/logs/（自动轮转保留最新 10 份）。",
+            "default_case": "LogAndBundle",
+            "cases": [
+                {
+                    "name": "LogAndBundle",
+                    "label": "开启专项日志 + 一键 Issue 压缩包（推荐，已脱敏）",
+                    "pipeline_override": {
+                        "IslandPlanOptDebugExport": {
+                            "attach": {
+                                "diag_export_mode": "bundle"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "BundleWithScreenshots",
+                    "label": "开启压缩包并附带异常现场截图",
+                    "pipeline_override": {
+                        "IslandPlanOptDebugExport": {
+                            "attach": {
+                                "diag_export_mode": "bundle_screenshots"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "LogOnly",
+                    "label": "仅导出纯文本专项日志（.log）",
+                    "pipeline_override": {
+                        "IslandPlanOptDebugExport": {
+                            "attach": {
+                                "diag_export_mode": "log_only"
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Off",
+                    "label": "关闭专项诊断导出",
+                    "pipeline_override": {
+                        "IslandPlanOptDebugExport": {
+                            "attach": {
+                                "diag_export_mode": "off"
+                            }
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}
