@@ -191,16 +191,16 @@ def is_lobby_entries(
     right_mid_entries: list[dict[str, Any]] | None = None,
 ) -> bool:
     """Return True when lobby bottom-right / right-mid OCR markers are present."""
-    bottom_texts = [_clean(e.get("text")) for e in bottom_right_entries if isinstance(e, dict)]
+    bottom_texts = [_clean(e.get("text")).upper() for e in bottom_right_entries if isinstance(e, dict)]
     if any(
         kw in txt
         for txt in bottom_texts
-        for kw in ("整备列车", "客运管理", "STARTENGINE", "启程")
+        for kw in ("整备列车", "客运管理", "STARTENGINE", "STARTENSINE", "启程")
     ):
         return True
     if right_mid_entries:
-        mid_texts = [_clean(e.get("text")) for e in right_mid_entries if isinstance(e, dict)]
-        if any(kw in txt for txt in mid_texts for kw in ("作战终端", "C.R.B.S.E", "访问城市")):
+        mid_texts = [_clean(e.get("text")).upper() for e in right_mid_entries if isinstance(e, dict)]
+        if any(kw in txt for txt in mid_texts for kw in ("作战终端", "C.R.B.S.E", "访问城市", "访问地区")):
             return True
     return False
 
@@ -604,6 +604,36 @@ def is_top_home_button_visible(image: Any) -> bool:
     chroma = np.maximum(np.maximum(r, g), b) - np.minimum(np.minimum(r, g), b)
     pill_ratio = float(np.mean((r > 130) & (g > 130) & (b > 130) & (chroma < 30)))
     return pill_ratio >= 0.45
+
+
+def is_top_back_button_visible(image: Any) -> bool:
+    """Return True when the white top-left back pill ('↩' at (83, 36)) is visible."""
+    left_flank = _slice_720(image, 26, 22, 56, 50)
+    arrow_center = _slice_720(image, 62, 22, 104, 50)
+    right_flank = _slice_720(image, 110, 22, 140, 50)
+    if left_flank is None or arrow_center is None or right_flank is None:
+        return False
+
+    def _pill_ratios(patch: np.ndarray) -> tuple[float, float]:
+        b = patch[:, :, 0].astype(np.float32)
+        g = patch[:, :, 1].astype(np.float32)
+        r = patch[:, :, 2].astype(np.float32)
+        chroma = np.maximum(np.maximum(r, g), b) - np.minimum(np.minimum(r, g), b)
+        white_ratio = float(np.mean((r > 160) & (g > 160) & (b > 160) & (chroma < 30)))
+        dark_ratio = float(np.mean((r < 95) & (g < 95) & (b < 95) & (chroma < 40)))
+        return white_ratio, dark_ratio
+
+    left_white, left_dark = _pill_ratios(left_flank)
+    center_white, center_dark = _pill_ratios(arrow_center)
+    right_white, right_dark = _pill_ratios(right_flank)
+    return (
+        left_white >= 0.70
+        and left_dark <= 0.10
+        and right_white >= 0.70
+        and right_dark <= 0.10
+        and center_white >= 0.45
+        and 0.06 <= center_dark <= 0.42
+    )
 
 
 def is_all_players_tab_selected(image: Any) -> bool:

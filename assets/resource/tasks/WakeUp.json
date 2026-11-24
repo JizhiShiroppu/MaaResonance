@@ -85,7 +85,7 @@
         "WakeUpBlindDismissPopups": {
             "type": "switch",
             "label": "安全试探关闭首登月卡/未知弹窗",
-            "description": "当停留在非大厅/非登录/非加载的遮挡弹屏时，尝试点击上方安全空白区关闭弹窗（如每日月卡领奖遮罩）。",
+            "description": "当停留在非大厅/非登录/非加载的遮挡弹屏或误入子页面时，优先识别返回并安全点击左/上方空白区关闭弹窗（避开底部列车电力与头像区）。",
             "default_case": "Yes",
             "cases": [
                 {

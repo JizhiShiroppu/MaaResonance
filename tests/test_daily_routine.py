@@ -72,6 +72,7 @@ from maa_resonance.logic.daily_routine import (
     is_revenue_ranking_entries,
     is_revenue_report_entries,
     is_tiger_wealth_ranking_entries,
+    is_top_back_button_visible,
     is_top_home_button_visible,
     parse_battle_pass_title,
     parse_daily_activity_score,
@@ -114,6 +115,8 @@ class DailyRoutineLogicTest(unittest.TestCase):
         ]
         self.assertTrue(is_lobby_entries(lobby_bottom))
         self.assertFalse(is_drawer_entries(lobby_bottom))
+        self.assertTrue(is_lobby_entries([{"text": "START ENSINE", "box": [1169, 671, 73, 10]}]))
+        self.assertTrue(is_lobby_entries([], [{"text": "访问地区", "box": [1120, 480, 90, 24]}]))
 
         drawer = [
             {"text": "查看更多信息", "box": [344, 300, 84, 18]},
@@ -226,8 +229,30 @@ class DailyRoutineLogicTest(unittest.TestCase):
         # 1. Top home button visible vs dark screen
         img = np.zeros((720, 1280, 3), dtype=np.uint8)
         self.assertFalse(is_top_home_button_visible(img))
+        self.assertFalse(is_top_back_button_visible(img))
         img[22:50, 175:220] = (180, 180, 180)
         self.assertTrue(is_top_home_button_visible(img))
+
+        # 1b. Top-left white back pill ('↩') vs solid white / dimmed gray
+        def _make_back_pill_frame(width: int = 1280, height: int = 720, pill_val: int = 245) -> np.ndarray:
+            frame = np.zeros((height, width, 3), dtype=np.uint8)
+            sx = width / 1280.0
+            sy = height / 720.0
+            frame[int(round(14 * sy)) : int(round(59 * sy)), int(round(16 * sx)) : int(round(148 * sx))] = (
+                pill_val,
+                pill_val,
+                pill_val,
+            )
+            # Draw dark '↩' strokes inside arrow center [62..104, 22..50]
+            frame[int(round(28 * sy)) : int(round(32 * sy)), int(round(72 * sx)) : int(round(96 * sx))] = (15, 15, 15)
+            frame[int(round(32 * sy)) : int(round(44 * sy)), int(round(92 * sx)) : int(round(96 * sx))] = (15, 15, 15)
+            frame[int(round(40 * sy)) : int(round(44 * sy)), int(round(74 * sx)) : int(round(92 * sx))] = (15, 15, 15)
+            return frame
+
+        self.assertTrue(is_top_back_button_visible(_make_back_pill_frame(1280, 720)))
+        self.assertTrue(is_top_back_button_visible(_make_back_pill_frame(1024, 576)))
+        self.assertFalse(is_top_back_button_visible(np.full((720, 1280, 3), 245, dtype=np.uint8)))
+        self.assertFalse(is_top_back_button_visible(_make_back_pill_frame(1280, 720, pill_val=100)))
 
         # 2. 全部玩家 tab blue highlight vs unselected dark gray
         img[610:645, 760:830] = (56, 59, 57)  # BGR dark gray

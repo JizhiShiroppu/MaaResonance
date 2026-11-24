@@ -11,7 +11,9 @@ from unittest.mock import patch
 
 import numpy as np
 
+from maa_resonance.logic.daily_routine import TOP_BACK_POINT, TOP_HOME_POINT
 from maa_resonance.logic.wake_up import (
+    WAKEUP_BLIND_DISMISS_POINT,
     WAKEUP_NEWS_DISMISS_POINT,
     WAKEUP_POPUP_DISMISS_POINTS,
     WAKEUP_POPUP_SAFE_POINT,
@@ -21,6 +23,7 @@ from maa_resonance.logic.wake_up import (
     is_loading_screen,
     is_login_auth_blocker,
     is_news_announcement_popup,
+    is_subpage_screen,
     is_title_start_screen,
     parse_resource_download_mb,
 )
@@ -89,7 +92,11 @@ class WakeUpLogicTest(unittest.TestCase):
         self.assertTrue(is_game_screen_entries(loading))
         self.assertEqual(choose_wake_up_action(loading)["action"], "wait")
 
-        self.assertEqual(WAKEUP_POPUP_SAFE_POINT, (640, 680))
+        self.assertEqual(WAKEUP_POPUP_SAFE_POINT, (40, 360))
+        self.assertEqual(WAKEUP_BLIND_DISMISS_POINT, (40, 360))
+        self.assertNotIn((640, 680), WAKEUP_POPUP_DISMISS_POINTS)
+        self.assertNotIn((200, 660), WAKEUP_POPUP_DISMISS_POINTS)
+        self.assertTrue(all(pt[1] < 600 for pt in WAKEUP_POPUP_DISMISS_POINTS))
 
         monthly_popup = [{"text": "月卡每日领取"}, {"text": "触碰空白区域退出"}]
         self.assertEqual(
@@ -106,6 +113,70 @@ class WakeUpLogicTest(unittest.TestCase):
         self.assertEqual(
             choose_wake_up_action([{"text": "未知活动大图"}], allow_blind_dismiss=True, unknown_streak=2)["action"],
             "blind_dismiss",
+        )
+
+    def test_wake_up_regression_markers_and_subpage_back_priority(self) -> None:
+        # Clipped title screen OCR from real PC log (2026-11-24 10:01:45)
+        clipped_title = [{"text": "击屏幕进入游戏", "box": [576, 550, 144, 19]}]
+        self.assertTrue(is_title_start_screen(clipped_title))
+        self.assertTrue(is_game_screen_entries(clipped_title))
+        self.assertEqual(
+            choose_wake_up_action(clipped_title),
+            {"action": "tap_title", "point": WAKEUP_TITLE_TAP_POINT},
+        )
+
+        # Birthday overlay & truncated blank-area dismiss hint
+        birthday_popup = [{"text": "生日快乐"}, {"text": "空白区域退出"}]
+        self.assertEqual(
+            choose_wake_up_action(birthday_popup),
+            {"action": "dismiss_popup", "point": (40, 360)},
+        )
+        self.assertEqual(
+            choose_wake_up_action([{"text": "生日祝福"}]),
+            {"action": "dismiss_popup", "point": (40, 360)},
+        )
+
+        # Loading hints observed in real logs
+        for loading_txt in ("正在检测更新", "正在稳定列车的形态场", "81%"):
+            entries = [{"text": loading_txt}]
+            self.assertTrue(is_loading_screen(entries), msg=loading_txt)
+            self.assertEqual(choose_wake_up_action(entries)["action"], "wait")
+
+        # Train Power screen OCR from real log (2026-11-24 10:02:01)
+        train_power_entries = [
+            {"text": "耗电占比"},
+            {"text": "电力等级"},
+            {"text": "提升等级"},
+            {"text": "列车电力"},
+            {"text": "模块供电"},
+            {"text": "引擎核心"},
+        ]
+        self.assertTrue(is_subpage_screen(train_power_entries))
+        self.assertEqual(
+            choose_wake_up_action(train_power_entries),
+            {"action": "nav_back", "point": TOP_BACK_POINT},
+        )
+
+        # Priority: explicit popups must still override has_top_back/has_top_home
+        self.assertEqual(
+            choose_wake_up_action([{"text": "获得物品"}], has_top_back=True, has_top_home=True),
+            {"action": "dismiss_popup", "point": (40, 360)},
+        )
+        self.assertEqual(
+            choose_wake_up_action([{"text": "月卡"}], has_top_back=True),
+            {"action": "dismiss_popup", "point": (40, 360)},
+        )
+        self.assertEqual(
+            choose_wake_up_action([{"text": "资讯"}, {"text": "公告"}], has_top_back=True),
+            {"action": "dismiss_news", "point": (40, 360)},
+        )
+        self.assertEqual(
+            choose_wake_up_action([], has_top_back=True, has_top_home=True),
+            {"action": "nav_home", "point": TOP_HOME_POINT},
+        )
+        self.assertEqual(
+            choose_wake_up_action([], has_top_back=True, has_top_home=False),
+            {"action": "nav_back", "point": TOP_BACK_POINT},
         )
 
     def test_wake_up_action_rotates_dismiss_points_on_consecutive_popups(self) -> None:
@@ -150,10 +221,141 @@ class WakeUpLogicTest(unittest.TestCase):
             self.assertEqual(
                 tapped,
                 [
-                    ("WakeUpStartAct0_dismiss_popup", (640, 680)),
-                    ("WakeUpStartAct1_dismiss_popup", (200, 660)),
+                    ("WakeUpStartAct0_dismiss_popup", (40, 360)),
+                    ("WakeUpStartAct1_dismiss_popup", (640, 28)),
                 ],
             )
+
+    def test_wake_up_action_rotates_blind_dismiss_across_wait_steps(self) -> None:
+        with _real_maa_resource() as Resource:
+            if Resource is None:
+                self.skipTest("maafw is not installed")
+            import agent.wake_up_action as wua
+
+            img = np.zeros((720, 1280, 3), dtype=np.uint8)
+            tapped: list[tuple[str, tuple[int, int]]] = []
+            lobby_calls = {"count": 0}
+
+            def fake_is_lobby(_ctx, name: str, _img) -> bool:
+                if name.endswith("InitLobby"):
+                    return False
+                lobby_calls["count"] += 1
+                # Steps 0..5 are non-lobby (wait, wait, blind_dismiss@0, wait, wait, blind_dismiss@1); L6 + LVerify6 = lobby.
+                return lobby_calls["count"] >= 7
+
+            def fake_tap(_ctx, name: str, pt: tuple[int, int]) -> bool:
+                tapped.append((name, pt))
+                return True
+
+            ctx = SimpleNamespace(tasker=SimpleNamespace(stopping=False), get_node_data=lambda _n: None)
+            argv = SimpleNamespace(node_name="WakeUpStart", custom_action_param={})
+            action = wua.WakeUpToLobbyAction()
+            with (
+                patch.object(wua, "safe_screencap", return_value=img),
+                patch.object(wua, "is_drawer", return_value=(False, [])),
+                patch.object(wua, "is_lobby", side_effect=fake_is_lobby),
+                patch.object(wua, "ocr_roi", return_value=[]),
+                patch.object(wua, "tap_point", side_effect=fake_tap),
+                patch.object(wua, "_is_adb_controller", return_value=False),
+                patch.object(wua, "sleep_with_stop", return_value=True),
+            ):
+                res = action.run(ctx, argv)
+
+            self.assertTrue(getattr(res, "success", True))
+            self.assertEqual(
+                tapped,
+                [
+                    ("WakeUpStartAct2_blind_dismiss", (40, 360)),
+                    ("WakeUpStartAct5_blind_dismiss", (640, 28)),
+                ],
+            )
+
+    def test_wake_up_action_escapes_train_power_subpage_immediately(self) -> None:
+        with _real_maa_resource() as Resource:
+            if Resource is None:
+                self.skipTest("maafw is not installed")
+            import agent.wake_up_action as wua
+
+            img = np.zeros((720, 1280, 3), dtype=np.uint8)
+            img[14:59, 16:148] = (245, 245, 245)
+            img[28:32, 72:96] = (15, 15, 15)
+            img[32:44, 92:96] = (15, 15, 15)
+            img[40:44, 74:92] = (15, 15, 15)
+
+            tapped: list[tuple[str, tuple[int, int]]] = []
+            lobby_calls = {"count": 0}
+
+            def fake_is_lobby(_ctx, name: str, _img) -> bool:
+                if name.endswith("InitLobby"):
+                    return False
+                lobby_calls["count"] += 1
+                # L0 is Train Power; L1 + LVerify1 are Lobby.
+                return lobby_calls["count"] >= 2
+
+            def fake_tap(_ctx, name: str, pt: tuple[int, int]) -> bool:
+                tapped.append((name, pt))
+                return True
+
+            ctx = SimpleNamespace(tasker=SimpleNamespace(stopping=False), get_node_data=lambda _n: None)
+            argv = SimpleNamespace(node_name="WakeUpStart", custom_action_param={})
+            action = wua.WakeUpToLobbyAction()
+            with (
+                patch.object(wua, "safe_screencap", return_value=img),
+                patch.object(wua, "is_drawer", return_value=(False, [])),
+                patch.object(wua, "is_lobby", side_effect=fake_is_lobby),
+                patch.object(wua, "ocr_roi", return_value=[{"text": "列车电力"}, {"text": "模块供电"}]),
+                patch.object(wua, "tap_point", side_effect=fake_tap),
+                patch.object(wua, "_is_adb_controller", return_value=False),
+                patch.object(wua, "sleep_with_stop", return_value=True),
+            ):
+                res = action.run(ctx, argv)
+
+            self.assertTrue(getattr(res, "success", True))
+            self.assertEqual(tapped, [("WakeUpStartAct0_nav_back", TOP_BACK_POINT)])
+
+    def test_wake_up_action_falls_back_to_return_to_lobby_after_blind_rotations(self) -> None:
+        with _real_maa_resource() as Resource:
+            if Resource is None:
+                self.skipTest("maafw is not installed")
+            import agent.wake_up_action as wua
+
+            img = np.zeros((720, 1280, 3), dtype=np.uint8)
+            tapped: list[tuple[str, tuple[int, int]]] = []
+            ret_calls: list[tuple[str, int, tuple[int, int]]] = []
+
+            def fake_tap(_ctx, name: str, pt: tuple[int, int]) -> bool:
+                tapped.append((name, pt))
+                return True
+
+            def fake_return_to_lobby(_ctx, name: str, max_steps: int = 6, *, dismiss_point=(200, 660)) -> bool:
+                ret_calls.append((name, max_steps, dismiss_point))
+                return True
+
+            ctx = SimpleNamespace(tasker=SimpleNamespace(stopping=False), get_node_data=lambda _n: None)
+            argv = SimpleNamespace(node_name="WakeUpStart", custom_action_param={})
+            action = wua.WakeUpToLobbyAction()
+            with (
+                patch.object(wua, "safe_screencap", return_value=img),
+                patch.object(wua, "is_drawer", return_value=(False, [])),
+                patch.object(wua, "is_lobby", return_value=False),
+                patch.object(wua, "ocr_roi", return_value=[{"text": "神秘弹窗广告"}]),
+                patch.object(wua, "tap_point", side_effect=fake_tap),
+                patch.object(wua, "return_to_lobby", side_effect=fake_return_to_lobby),
+                patch.object(wua, "_is_adb_controller", return_value=False),
+                patch.object(wua, "sleep_with_stop", return_value=True),
+            ):
+                res = action.run(ctx, argv)
+
+            self.assertTrue(getattr(res, "success", True))
+            self.assertEqual(
+                tapped,
+                [
+                    ("WakeUpStartAct2_blind_dismiss", (40, 360)),
+                    ("WakeUpStartAct5_blind_dismiss", (640, 28)),
+                    ("WakeUpStartAct8_blind_dismiss", (40, 220)),
+                ],
+            )
+            self.assertEqual(ret_calls, [("WakeUpStartTryBack8", 2, (40, 360))])
 
     def test_pipeline_loads_and_no_native_click_swipe(self) -> None:
         pipeline = json.loads((ROOT / "assets/resource/base/pipeline/daily/wake_up.json").read_text(encoding="utf-8"))

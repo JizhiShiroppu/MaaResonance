@@ -4,15 +4,17 @@ from __future__ import annotations
 import re
 from typing import Any
 
+from maa_resonance.logic.daily_routine import TOP_BACK_POINT, TOP_HOME_POINT
+
 WAKEUP_DOWNLOAD_CONFIRM_POINT: tuple[int, int] = (640, 505)
-WAKEUP_NEWS_DISMISS_POINT: tuple[int, int] = (640, 680)
+WAKEUP_NEWS_DISMISS_POINT: tuple[int, int] = (40, 360)
 WAKEUP_TITLE_TAP_POINT: tuple[int, int] = (640, 520)
-WAKEUP_POPUP_SAFE_POINT: tuple[int, int] = (640, 680)
-WAKEUP_BLIND_DISMISS_POINT: tuple[int, int] = (640, 680)
+WAKEUP_POPUP_SAFE_POINT: tuple[int, int] = (40, 360)
+WAKEUP_BLIND_DISMISS_POINT: tuple[int, int] = (40, 360)
 WAKEUP_POPUP_DISMISS_POINTS: tuple[tuple[int, int], ...] = (
-    (640, 680),
-    (200, 660),
     (40, 360),
+    (640, 28),
+    (40, 220),
     (640, 120),
 )
 
@@ -89,14 +91,18 @@ def is_title_start_screen(entries: list[dict[str, Any]]) -> bool:
     return any(
         kw in t
         for t in texts
-        for kw in ("点击屏幕进入游戏", "点击任意位置进入游戏", "下载已经完成")
+        for kw in ("点击屏幕进入游戏", "屏幕进入游戏", "点击任意位置进入游戏", "任意位置进入游戏", "下载已经完成")
     )
 
 
 def is_loading_screen(entries: list[dict[str, Any]]) -> bool:
     """Return True when a loading progress bar or percentage overlay is active."""
     texts = [_clean(e.get("text")) for e in entries if isinstance(e, dict)]
-    if any(kw in t for t in texts for kw in ("正在加载", "正在检查", "资源解压")):
+    if any(
+        kw in t
+        for t in texts
+        for kw in ("正在加载", "正在检查", "正在检测", "正在连接", "正在进入", "资源解压", "请稍作等待", "请稍候", "形态场")
+    ):
         return True
     return any(re.fullmatch(r"\d{1,3}(?:\.\d+)?%", t) for t in texts)
 
@@ -109,6 +115,8 @@ def is_game_screen_entries(entries: list[dict[str, Any]]) -> bool:
         "客运管理",
         "STARTENGINE",
         "点击屏幕进入游戏",
+        "屏幕进入游戏",
+        "雷索纳斯",
         "下载资源包",
         "资讯",
         "公告",
@@ -123,6 +131,37 @@ def is_game_screen_entries(entries: list[dict[str, Any]]) -> bool:
     return any(m in t for t in texts for m in game_markers) or is_loading_screen(entries)
 
 
+def is_subpage_screen(entries: list[dict[str, Any]]) -> bool:
+    """Return True when full-screen OCR shows a non-lobby in-game sub-page (e.g. 列车电力)."""
+    texts = [_clean(e.get("text")) for e in entries if isinstance(e, dict)]
+    subpage_markers = (
+        "列车电力",
+        "模块供电",
+        "电力等级",
+        "耗电占比",
+        "引擎核心",
+        "派遣委托",
+        "一键领取",
+        "删除已读",
+        "每日活跃",
+        "行动汇总",
+        "环游手册",
+        "开拓手册",
+        "营运总览",
+        "近期营收统计",
+        "无垠补给",
+        "总部商店",
+        "赴命商店",
+        "好友列表",
+        "我的名片",
+        "整顿中心",
+        "区域作战中心",
+        "虚演刻录",
+        "路线图",
+    )
+    return any(m in t for t in texts for m in subpage_markers)
+
+
 def choose_wake_up_action(
     full_entries: list[dict[str, Any]],
     *,
@@ -131,6 +170,9 @@ def choose_wake_up_action(
     allow_blind_dismiss: bool = True,
     unknown_streak: int = 0,
     dismiss_attempt: int = 0,
+    has_top_back: bool = False,
+    has_top_home: bool = False,
+    allow_subpage_back: bool = True,
 ) -> dict[str, Any]:
     """Decide the next WakeUp action from full-screen OCR entries."""
     if is_login_auth_blocker(full_entries):
@@ -166,12 +208,31 @@ def choose_wake_up_action(
     if any(
         kw in t
         for t in texts
-        for kw in ("获得物品", "触碰空白区域退出", "点击空白处关闭", "点击任意位置继续", "月卡", "每日签到", "签到奖励")
+        for kw in (
+            "获得物品",
+            "触碰空白区域退出",
+            "空白区域退出",
+            "触碰空白",
+            "点击空白处关闭",
+            "点击任意位置继续",
+            "月卡",
+            "每日签到",
+            "签到奖励",
+            "生日快乐",
+            "生日祝福",
+            "生日贺礼",
+        )
     ):
         return {"action": "dismiss_popup", "point": dismiss_pt}
 
     if is_loading_screen(full_entries):
         return {"action": "wait", "point": None}
+
+    if allow_subpage_back:
+        if has_top_home:
+            return {"action": "nav_home", "point": TOP_HOME_POINT}
+        if has_top_back or is_subpage_screen(full_entries):
+            return {"action": "nav_back", "point": TOP_BACK_POINT}
 
     if allow_blind_dismiss and unknown_streak >= 2:
         return {"action": "blind_dismiss", "point": dismiss_pt}

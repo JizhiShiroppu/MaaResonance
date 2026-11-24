@@ -10,11 +10,16 @@ from maa.custom_action import CustomAction
 from agent.utils.action_helpers import ocr_roi, parse_action_param, tap_point
 from agent.utils.input_guard import get_effective_controller_info, safe_screencap, sleep_with_stop
 from agent.utils.lobby_nav import is_drawer, is_lobby, is_stopping, return_to_lobby
-from maa_resonance.logic.daily_routine import DRAWER_CLOSE_POINT
+from maa_resonance.logic.daily_routine import (
+    DRAWER_CLOSE_POINT,
+    is_top_back_button_visible,
+    is_top_home_button_visible,
+)
 from maa_resonance.logic.wake_up import (
     WAKEUP_POPUP_SAFE_POINT,
     choose_wake_up_action,
     is_game_screen_entries,
+    is_loading_screen,
 )
 
 WAKEUP_ATTACH_NODES: tuple[str, ...] = (
@@ -76,15 +81,19 @@ def run_wake_up_to_lobby(
         print("[WakeUp] 当前已在列车大厅，直接进入后续日常。", flush=True)
         return True
 
-    full_entries = ocr_roi(context, img, f"{prefix}InitFull", [0, 0, 1280, 720])
-    if _is_adb_controller(context) and auto_launch_adb and not is_game_screen_entries(full_entries):
-        print("[WakeUp] 检测到 ADB 未处于游戏画面，尝试拉起《雷索纳斯》...", flush=True)
-        context.run_action("WakeUpAdbStartApp", [0, 0, 1280, 720])
-        if not sleep_with_stop(context, 6.0):
-            return False
+    if _is_adb_controller(context) and auto_launch_adb:
+        full_entries = ocr_roi(context, img, f"{prefix}InitFull", [0, 0, 1280, 720])
+        if not is_game_screen_entries(full_entries):
+            print("[WakeUp] 检测到 ADB 未处于游戏画面，尝试拉起《雷索纳斯》...", flush=True)
+            context.run_action("WakeUpAdbStartApp", [0, 0, 1280, 720])
+            if not sleep_with_stop(context, 6.0):
+                return False
 
     unknown_streak = 0
     dismiss_streak = 0
+    blind_attempts = 0
+    nav_streak = 0
+    last_action: str | None = None
     for step in range(max(1, int(max_steps))):
         img = safe_screencap(context)
         if img is None:
@@ -96,6 +105,9 @@ def run_wake_up_to_lobby(
                 return False
             unknown_streak = 0
             dismiss_streak = 0
+            blind_attempts = 0
+            nav_streak = 0
+            last_action = None
             if not sleep_with_stop(context, 0.7):
                 return False
             continue
@@ -110,9 +122,18 @@ def run_wake_up_to_lobby(
                 return True
             unknown_streak = 0
             dismiss_streak = 0
+            blind_attempts = 0
+            nav_streak = 0
+            last_action = None
             continue
 
         full_entries = ocr_roi(context, img, f"{prefix}Full{step}", [0, 0, 1280, 720])
+        has_top_back = is_top_back_button_visible(img)
+        has_top_home = (
+            has_top_back
+            and is_top_home_button_visible(img)
+            and last_action != "nav_home"
+        )
         decision = choose_wake_up_action(
             full_entries,
             max_download_mb=max_download_mb,
@@ -120,6 +141,9 @@ def run_wake_up_to_lobby(
             allow_blind_dismiss=allow_blind_dismiss,
             unknown_streak=unknown_streak,
             dismiss_attempt=dismiss_streak,
+            has_top_back=has_top_back,
+            has_top_home=has_top_home,
+            allow_subpage_back=nav_streak < 3,
         )
         action = decision["action"]
         if action == "stop_auth":
@@ -133,12 +157,13 @@ def run_wake_up_to_lobby(
             return False
 
         if action == "wait":
-            dismiss_streak = 0
-            if not is_game_screen_entries(full_entries):
-                unknown_streak += 1
-            else:
+            if is_loading_screen(full_entries):
                 unknown_streak = 0
-            if unknown_streak >= 4 and return_to_lobby(
+                blind_attempts = 0
+                nav_streak = 0
+            else:
+                unknown_streak += 1
+            if not allow_blind_dismiss and unknown_streak >= 4 and return_to_lobby(
                 context,
                 f"{prefix}TryBack{step}",
                 max_steps=2,
@@ -150,18 +175,50 @@ def run_wake_up_to_lobby(
             continue
 
         unknown_streak = 0
-        if action in ("dismiss_popup", "blind_dismiss", "dismiss_news"):
+        if action == "blind_dismiss":
             dismiss_streak += 1
+            blind_attempts += 1
+            nav_streak = 0
+        elif action in ("dismiss_popup", "dismiss_news"):
+            dismiss_streak += 1
+            blind_attempts = 0
+            nav_streak = 0
+        elif action in ("nav_back", "nav_home"):
+            dismiss_streak = 0
+            blind_attempts = 0
+            nav_streak += 1
         else:
             dismiss_streak = 0
+            blind_attempts = 0
+            nav_streak = 0
+        last_action = action
+
         point = decision.get("point")
         if point is not None:
             print(f"[WakeUp] 执行唤醒动作：{action} @ {point}", flush=True)
             if not tap_point(context, f"{prefix}Act{step}_{action}", point):
                 return False
-            wait_sec = 4.0 if action == "confirm_download" else 2.0 if action == "tap_title" else 1.2
+            wait_sec = (
+                4.0
+                if action == "confirm_download"
+                else 2.0
+                if action == "tap_title"
+                else 1.05
+                if action in ("nav_back", "nav_home")
+                else 1.2
+            )
             if not sleep_with_stop(context, wait_sec):
                 return False
+
+        if action == "blind_dismiss" and blind_attempts >= 3 and (bool(full_entries) or blind_attempts >= 4):
+            blind_attempts = 0
+            if return_to_lobby(
+                context,
+                f"{prefix}TryBack{step}",
+                max_steps=2,
+                dismiss_point=WAKEUP_POPUP_SAFE_POINT,
+            ):
+                return True
 
     print("[WakeUp] 超时未能确认到达列车大厅。", flush=True)
     return False
